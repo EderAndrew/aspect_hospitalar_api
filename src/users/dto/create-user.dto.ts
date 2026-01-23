@@ -1,9 +1,9 @@
 import {
   IsBoolean,
-  IsDateString,
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -26,6 +26,10 @@ export class CreateUserDto {
   @MinLength(6)
   readonly password: string;
 
+  @IsOptional()
+  @IsString()
+  readonly avatar?: string;
+
   @IsNotEmpty()
   @IsEnum(UserRole)
   readonly role: UserRole;
@@ -33,8 +37,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsBoolean()
   readonly status: boolean;
-
-  @IsNotEmpty()
-  @IsDateString()
-  readonly created_at: string;
 }
