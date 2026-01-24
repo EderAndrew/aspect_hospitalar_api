@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +14,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Schedules } from 'src/schedules/entities/schedules.entity';
 
 @Entity('users')
 export class User {
@@ -50,4 +52,7 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt?: Date;
+
+  @OneToMany(() => Schedules, schedule => schedule.user)
+  schedules: Schedules[];
 }

@@ -1,12 +1,37 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { ExamsService } from './exams.service';
+import { Exam } from './entities/exam.entity';
+import { CreateExamDto } from './dto/create-exam.dto';
 
 @Controller('exams')
 export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
 
-  @Get()
-  exams(): string {
-    return this.examsService.getExams();
+  @Post('createExam')
+  create(@Body() createExamDto: CreateExamDto): Promise<any> {
+    return this.examsService.create(createExamDto);
+  }
+
+  @Get('findExams')
+  findAll(): Promise<Exam[]> {
+    return this.examsService.findAll();
+  }
+
+  @Get('exam/:id')
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Exam> {
+    return this.examsService.findOne(id);
+  }
+
+  @Delete('exam/:id')
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<any> {
+    return this.examsService.remove(id);
   }
 }

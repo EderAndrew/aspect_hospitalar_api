@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
+import { CreateScheduleDto } from './dto/create-schedule.dto';
 
 @Controller('schedules')
 export class SchedulesController {
   constructor(private readonly scheduleService: SchedulesService) {}
+
+  @Post('create')
+  create(@Body() createScheduleDto: CreateScheduleDto): Promise<any> {
+    return this.scheduleService.create(createScheduleDto);
+  }
 
   @Get()
   schedules(@Query() pagination: any): string {
