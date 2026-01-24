@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
   Controller,
@@ -14,6 +13,7 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { Schedules } from './entities/schedules.entity';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+//import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
 @Controller('schedules')
 export class SchedulesController {
@@ -24,6 +24,7 @@ export class SchedulesController {
     return this.scheduleService.create(createScheduleDto);
   }
 
+  //@UseInterceptors(HandlerCacheInterceptor)
   @Get('allSchedules')
   findAll(@Query() paginationDto: PaginationDto): Promise<Schedules[]> {
     return this.scheduleService.findAll(paginationDto);
@@ -53,12 +54,5 @@ export class SchedulesController {
     @Body() updateScheduleDto: UpdateScheduleDto,
   ): Promise<any> {
     return this.scheduleService.remove(id, updateScheduleDto);
-  }
-
-  @Get()
-  schedules(@Query() pagination: any): string {
-    const { limit = 10, offset = 0 } = pagination;
-
-    return this.scheduleService.getSchedule(limit, offset);
   }
 }
