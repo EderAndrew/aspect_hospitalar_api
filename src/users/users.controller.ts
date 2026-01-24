@@ -35,9 +35,9 @@ export class UsersController {
   @Patch('user/:id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() payload: UpdateUserDto,
+    @Body() updateUseDto: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.update(id, payload);
+    return this.usersService.update(id, updateUseDto);
   }
 
   @Delete('user/:id')

@@ -16,11 +16,17 @@ export class Schedules {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, user => user.schedules)
+  @ManyToOne(() => User, user => user.schedules, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Exam, exam => exam.schedules)
+  @ManyToOne(() => Exam, exam => exam.schedules, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
   @JoinColumn({ name: 'examId' })
   exam: Exam;
 
