@@ -29,7 +29,7 @@ export class SchedulesController {
     return this.scheduleService.findAll(paginationDto);
   }
 
-  @Get(':id')
+  @Get('schedule/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Schedules> {
     return this.scheduleService.findOne(id);
   }
@@ -39,7 +39,7 @@ export class SchedulesController {
     return this.scheduleService.findAllActives();
   }
 
-  @Patch('updateSchedule')
+  @Patch('updateSchedule/:id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateScheduleDto: UpdateScheduleDto,
@@ -47,7 +47,7 @@ export class SchedulesController {
     return this.scheduleService.update(id, updateScheduleDto);
   }
 
-  @Patch('removeSchedule')
+  @Patch('removeSchedule/:id')
   remove(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateScheduleDto: UpdateScheduleDto,
