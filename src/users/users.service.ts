@@ -10,22 +10,23 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { HashingService } from 'src/auth/hashing/hashing.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly hashingService: HashingService,
   ) {}
 
-  async create(payload: CreateUserDto) {
-    const saltRounds = 10;
-
-    const hashedPassword = await bcrypt.hash(payload.password, saltRounds);
+  async create(createUserDto: CreateUserDto) {
+    const hashedPassword = await this.hashingService.hash(
+      createUserDto.password,
+    );
 
     const newUser = {
-      ...payload,
+      ...createUserDto,
       password: hashedPassword,
     };
 
@@ -60,10 +61,25 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, payload: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const userData = {
+      name: updateUserDto?.name,
+      avatar: updateUserDto?.avatar,
+      role: updateUserDto?.role,
+      status: updateUserDto?.status,
+    };
+
+    if (updateUserDto?.password) {
+      const hashedPassword = await this.hashingService.hash(
+        updateUserDto.password,
+      );
+
+      userData['password'] = hashedPassword;
+    }
+
     const user = await this.userRepository.preload({
       id,
-      ...payload,
+      ...userData,
     });
 
     if (!user) throw new BadRequestException('Erro ao atualizar o usuário.');

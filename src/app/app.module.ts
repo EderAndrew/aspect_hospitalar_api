@@ -4,10 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
 import { ExamsModule } from '../exams/exams.module';
-import { SchedulesModule } from '../schedules/schedules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import appConfig from './app.config';
+import { AuthModule } from 'src/auth/auth.module';
+import { SchedulesModule } from 'src/schedules/schedules.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import appConfig from './app.config';
     UsersModule,
     ExamsModule,
     SchedulesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

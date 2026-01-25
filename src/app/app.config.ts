@@ -8,8 +8,8 @@ export default registerAs('app', () => ({
     database: process.env.DATABASE_DATABASE,
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
-    autoloadEntities: Boolean(process.env.DATABASE_AUTOLOADENTITIES), //It loads the entities without needing to specify them.
-    synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE), //Sincronizes with DB. Do not use in production
+    autoloadEntities: Boolean(process.env.DATABASE_AUTOLOAD_ENTITIES), // Loads entities from forFeature() modules
+    synchronize: Boolean(process.env.DATABASE_SYNCRONIZE), // Syncs schema with DB. Do not use in production
   },
   environment: process.env.NODE_ENV || 'development',
 }));
