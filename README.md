@@ -42,6 +42,8 @@ gerenciar operações de um sistema hospitalar, permitindo:
   hash de senhas
 - **[cookie-parser](https://www.npmjs.com/package/cookie-parser)** (v1.4.7) -
   Middleware para parsing de cookies
+- **[helmet](https://helmetjs.github.io/)** (v8.1.0) - Middleware de segurança HTTP
+- **[csrf-csrf](https://www.npmjs.com/package/csrf-csrf)** (v4.0.3) - Proteção CSRF
 
 ### Validação e Transformação
 
@@ -68,6 +70,8 @@ gerenciar operações de um sistema hospitalar, permitindo:
   JavaScript/TypeScript
 - **[Prettier](https://prettier.io/)** (v3.4.2) - Formatador de código
 - **[Jest](https://jestjs.io/)** (v30.0.0) - Framework de testes
+- **[ts-node](https://www.npmjs.com/package/ts-node)** (v10.9.2) - Execução de TypeScript diretamente
+- **[tsconfig-paths](https://www.npmjs.com/package/tsconfig-paths)** (v4.2.0) - Resolução de paths do TypeScript
 - **[pnpm](https://pnpm.io/)** - Gerenciador de pacotes rápido e eficiente
 
 ## 📁 Estrutura do Projeto
@@ -81,6 +85,7 @@ src/
 ├── schedules/        # Módulo de agendamentos
 ├── common/           # Utilitários e DTOs compartilhados
 ├── database/         # Seeds e dados iniciais
+│   └── seeds/        # Scripts de seed (exams, user)
 └── main.ts           # Arquivo de entrada da aplicação
 ```
 
@@ -111,32 +116,45 @@ pnpm install
    com as seguintes variáveis:
 
 ```env
-# Database
-DB_TYPE=postgres
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=seu_usuario
-DB_PASSWORD=sua_senha
-DB_DATABASE=nome_do_banco
-DB_SYNC=true
-DB_AUTOLOAD_ENTITIES=true
-
-# JWT
-JWT_SECRET=seu_jwt_secret
-JWT_EXPIRES_IN=15m
-JWT_REFRESH_SECRET=seu_refresh_secret
-JWT_REFRESH_EXPIRES_IN=7d
-
 # Application
-PORT=3001
-FRONTEND_URL=http://localhost:3000
-NODE_ENV=YOUR_ENVIRONMENT
+PORT=4001
+NODE_ENV=development
+FRONTEND_URL=http://localhost:4001
+
+# Database
+DATABASE_TYPE=postgres
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=sua_senha
+DATABASE_DATABASE=aspect-hospitalar
+DATABASE_AUTOLOAD_ENTITIES=1
+DATABASE_SYNCRONIZE=1
+
+# JWT Configuration
+JWT_SECRET=seu_jwt_secret_seguro
+JWT_TOKEN_AUDIENCE=https://localhost:4001
+JWT_TOKEN_ISSUER=https://localhost:4001
+JWT_TTL=900
+JWT_REFRESH_TTL=86400
+
+# Seed Configuration (para seed:user)
+SEED_NAME=Seu Nome
+SEED_EMAIL=seu_email@exemplo.com
+SEED_PASSWORD=Sua_Senha_Segura
+SEED_ROLE=ADMIN
+SEED_AVATAR=
+SEED_STATUS=true
 ```
 
 4. Execute as migrations/seeds (se necessário):
 
 ```bash
+# Seed de exames médicos
 pnpm run seed:exams
+
+# Seed de usuário inicial (requer variáveis de ambiente configuradas)
+pnpm run seed:user
 ```
 
 ### Executando a Aplicação
@@ -153,7 +171,7 @@ pnpm run start:prod
 pnpm run start:debug
 ```
 
-A API estará disponível em `http://localhost:3001` (ou na porta configurada no
+A API estará disponível em `http://localhost:4001` (ou na porta configurada no
 `.env`)
 
 ## 🧪 Testes
@@ -180,7 +198,8 @@ pnpm run test:e2e
 - `pnpm run start:dev` - Inicia em modo desenvolvimento
 - `pnpm run start:prod` - Inicia em modo produção
 - `pnpm run lint` - Executa o linter e corrige problemas
-- `pnpm run seed:exams` - Executa seed de exames
+- `pnpm run seed:exams` - Executa seed de exames médicos
+- `pnpm run seed:user` - Executa seed de usuário inicial (requer variáveis SEED_* configuradas)
 
 ## 🔐 Autenticação
 
@@ -237,6 +256,26 @@ A aplicação utiliza:
 - **CORS habilitado**: Configurado para aceitar requisições do frontend
 - **Cookie Parser**: Para gerenciamento de cookies de autenticação
 - **Cache Interceptor**: Para otimização de performance
+- **Helmet**: Middleware de segurança HTTP para proteção contra vulnerabilidades comuns
+
+## 🌱 Seeds
+
+O projeto inclui scripts de seed para popular o banco de dados com dados iniciais:
+
+### Seed de Exames (`seed:exams`)
+Popula o banco com exames médicos pré-configurados. Não requer configuração adicional.
+
+### Seed de Usuário (`seed:user`)
+Cria um usuário inicial no sistema. Requer as seguintes variáveis de ambiente configuradas no `.env`:
+
+- `SEED_NAME`: Nome completo do usuário
+- `SEED_EMAIL`: Email do usuário (deve ser único)
+- `SEED_PASSWORD`: Senha do usuário (será hasheada automaticamente)
+- `SEED_ROLE`: Role do usuário (ex: `ADMIN`, `USER`)
+- `SEED_AVATAR`: URL do avatar (opcional)
+- `SEED_STATUS`: Status do usuário (`true` ou `false`)
+
+**Nota**: O seed verifica se o usuário já existe antes de criar. Se o email já estiver cadastrado, o seed não criará um novo usuário.
 
 ## 📄 Licença
 
