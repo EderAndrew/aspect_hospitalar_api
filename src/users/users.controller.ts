@@ -14,6 +14,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
+import { TokenPayloadParam } from 'src/auth/params/token-payload.params';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 
 @UseGuards(AuthTokenGuard)
 @Controller('users')
@@ -33,6 +35,11 @@ export class UsersController {
   @Get('user/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.usersService.findOne(id);
+  }
+
+  @Get('me')
+  getMe(@TokenPayloadParam() tokenPayload: TokenPayloadDto) {
+    return this.usersService.me(tokenPayload);
   }
 
   @Patch('user/:id')

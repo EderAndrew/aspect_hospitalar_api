@@ -5,9 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Schedules } from './entities/schedules.entity';
 import { UsersModule } from 'src/users/users.module';
 import { ExamsModule } from 'src/exams/exams.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Schedules]), UsersModule, ExamsModule],
+  imports: [
+    TypeOrmModule.forFeature([Schedules]),
+    UsersModule,
+    ExamsModule,
+    CacheModule.register(),
+  ],
   controllers: [SchedulesController],
   providers: [SchedulesService],
 })

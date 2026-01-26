@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from 'src/auth/hashing/hashing.service';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 
 @Injectable()
 export class UsersService {
@@ -59,6 +60,25 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('Usuário não encontrado.');
     return user;
+  }
+
+  async me(tokenPayload: TokenPayloadDto) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: tokenPayload.sub,
+      },
+    });
+
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      status: user.status,
+    };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

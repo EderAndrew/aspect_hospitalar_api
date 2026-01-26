@@ -7,6 +7,7 @@ import { HashingService } from './hashing/hashing.service';
 import jwtConfig from './config/jwt.config';
 import type { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -38,18 +39,70 @@ export class AuthService {
       throw new UnauthorizedException('Usuário ou senha inválidos');
     }
 
-    const accessToken = await this.jwtService.signAsync(
+    const accessToken = await this.signJwtAsync(
+      user.id,
+      this.jwtConfiguration.jwtTtl,
+    );
+
+    const refreshToken = await this.signJwtAsync(
+      user.id,
+      this.jwtConfiguration.refresh_jwtTtl,
+    );
+
+    return { accessToken, refreshToken };
+  }
+
+  async refresh(req: Request) {
+    const refreshToken = req.cookies?.refresh_token as string;
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token ausente.');
+    }
+
+    try {
+      await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.jwtConfiguration.secret,
+      });
+
+      // Ensure type safety for decoded payload
+      interface JwtPayload {
+        sub: string | number;
+        [key: string]: unknown;
+      }
+
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(
+        refreshToken,
+        {
+          secret: this.jwtConfiguration.secret,
+        },
+      );
+
+      const newAccessToken = await this.signJwtAsync(
+        payload.sub as string,
+        this.jwtConfiguration.jwtTtl,
+      );
+
+      const newRefreshToken = await this.signJwtAsync(
+        payload.sub as string,
+        this.jwtConfiguration.refresh_jwtTtl,
+      );
+
+      return { newAccessToken, newRefreshToken };
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
+
+  private async signJwtAsync(sub: string, expiresIn: number) {
+    return await this.jwtService.signAsync(
       {
-        sub: user.id,
+        sub,
       },
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         secret: this.jwtConfiguration.secret,
-        expiresIn: this.jwtConfiguration.jwtTtl,
+        expiresIn,
       },
     );
-
-    return { accessToken };
   }
 }
