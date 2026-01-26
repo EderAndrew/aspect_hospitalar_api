@@ -1,45 +1,71 @@
 # Aspect Hospitalar API
 
-API REST desenvolvida em NestJS para gerenciamento de sistema hospitalar, incluindo controle de usuários, exames médicos e agendamentos.
+API REST desenvolvida em NestJS para gerenciamento de sistema hospitalar,
+incluindo controle de usuários, exames médicos e agendamentos.
 
 ## 📋 Sobre o Projeto
 
-A **Aspect Hospitalar API** é uma aplicação backend que fornece endpoints para gerenciar operações de um sistema hospitalar, permitindo:
+A **Aspect Hospitalar API** é uma aplicação backend que fornece endpoints para
+gerenciar operações de um sistema hospitalar, permitindo:
 
-- **Autenticação e Autorização**: Sistema de login com JWT, refresh tokens e controle de acesso baseado em roles
-- **Gestão de Usuários**: CRUD completo de usuários com diferentes níveis de permissão (Admin, etc.)
-- **Gestão de Exames**: Cadastro e gerenciamento de exames médicos com informações detalhadas (especialidade, preparação, duração)
-- **Agendamentos**: Sistema de agendamento que relaciona pacientes, exames e usuários, com controle de status e informações adicionais
+- **Autenticação e Autorização**: Sistema de login com JWT, refresh tokens e
+  controle de acesso baseado em roles
+- **Gestão de Usuários**: CRUD completo de usuários com diferentes níveis de
+  permissão (Admin, etc.)
+- **Gestão de Exames**: Cadastro e gerenciamento de exames médicos com
+  informações detalhadas (especialidade, preparação, duração)
+- **Agendamentos**: Sistema de agendamento que relaciona pacientes, exames e
+  usuários, com controle de status e informações adicionais
 
 ## 🛠️ Tecnologias Utilizadas
 
 ### Core Framework
-- **[NestJS](https://nestjs.com/)** (v11.0.1) - Framework Node.js progressivo para construção de aplicações server-side eficientes e escaláveis
-- **[TypeScript](https://www.typescriptlang.org/)** (v5.7.3) - Superset do JavaScript com tipagem estática
+
+- **[NestJS](https://nestjs.com/)** (v11.0.1) - Framework Node.js progressivo
+  para construção de aplicações server-side eficientes e escaláveis
+- **[TypeScript](https://www.typescriptlang.org/)** (v5.7.3) - Superset do
+  JavaScript com tipagem estática
 
 ### Banco de Dados
+
 - **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional
-- **[TypeORM](https://typeorm.io/)** (v0.3.28) - ORM para TypeScript e JavaScript
-- **[@nestjs/typeorm](https://docs.nestjs.com/techniques/database)** (v11.0.0) - Módulo TypeORM para NestJS
+- **[TypeORM](https://typeorm.io/)** (v0.3.28) - ORM para TypeScript e
+  JavaScript
+- **[@nestjs/typeorm](https://docs.nestjs.com/techniques/database)** (v11.0.0) -
+  Módulo TypeORM para NestJS
 
 ### Autenticação e Segurança
-- **[@nestjs/jwt](https://docs.nestjs.com/security/authentication)** (v11.0.2) - Módulo JWT para NestJS
-- **[bcrypt](https://www.npmjs.com/package/bcrypt)** (v6.0.0) - Biblioteca para hash de senhas
-- **[cookie-parser](https://www.npmjs.com/package/cookie-parser)** (v1.4.7) - Middleware para parsing de cookies
+
+- **[@nestjs/jwt](https://docs.nestjs.com/security/authentication)** (v11.0.2) -
+  Módulo JWT para NestJS
+- **[bcrypt](https://www.npmjs.com/package/bcrypt)** (v6.0.0) - Biblioteca para
+  hash de senhas
+- **[cookie-parser](https://www.npmjs.com/package/cookie-parser)** (v1.4.7) -
+  Middleware para parsing de cookies
 
 ### Validação e Transformação
-- **[class-validator](https://github.com/typestack/class-validator)** (v0.14.3) - Validação de DTOs usando decorators
-- **[class-transformer](https://github.com/typestack/class-transformer)** (v0.5.1) - Transformação de objetos e classes
+
+- **[class-validator](https://github.com/typestack/class-validator)**
+  (v0.14.3) - Validação de DTOs usando decorators
+- **[class-transformer](https://github.com/typestack/class-transformer)**
+  (v0.5.1) - Transformação de objetos e classes
 
 ### Configuração e Ambiente
-- **[@nestjs/config](https://docs.nestjs.com/techniques/configuration)** (v4.0.2) - Módulo de configuração do NestJS
+
+- **[@nestjs/config](https://docs.nestjs.com/techniques/configuration)**
+  (v4.0.2) - Módulo de configuração do NestJS
 
 ### Cache
-- **[@nestjs/cache-manager](https://docs.nestjs.com/techniques/caching)** (v3.1.0) - Sistema de cache para NestJS
-- **[cache-manager](https://www.npmjs.com/package/cache-manager)** (v7.2.8) - Gerenciador de cache
+
+- **[@nestjs/cache-manager](https://docs.nestjs.com/techniques/caching)**
+  (v3.1.0) - Sistema de cache para NestJS
+- **[cache-manager](https://www.npmjs.com/package/cache-manager)** (v7.2.8) -
+  Gerenciador de cache
 
 ### Desenvolvimento
-- **[ESLint](https://eslint.org/)** (v9.18.0) - Linter para JavaScript/TypeScript
+
+- **[ESLint](https://eslint.org/)** (v9.18.0) - Linter para
+  JavaScript/TypeScript
 - **[Prettier](https://prettier.io/)** (v3.4.2) - Formatador de código
 - **[Jest](https://jestjs.io/)** (v30.0.0) - Framework de testes
 - **[pnpm](https://pnpm.io/)** - Gerenciador de pacotes rápido e eficiente
@@ -69,18 +95,20 @@ src/
 ### Instalação
 
 1. Clone o repositório:
+
 ```bash
 git clone <repository-url>
 cd aspect_hospitalar_api
 ```
 
 2. Instale as dependências:
+
 ```bash
 pnpm install
 ```
 
-3. Configure as variáveis de ambiente:
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+3. Configure as variáveis de ambiente: Crie um arquivo `.env` na raiz do projeto
+   com as seguintes variáveis:
 
 ```env
 # Database
@@ -102,9 +130,11 @@ JWT_REFRESH_EXPIRES_IN=7d
 # Application
 PORT=3001
 FRONTEND_URL=http://localhost:3000
+NODE_ENV=YOUR_ENVIRONMENT
 ```
 
 4. Execute as migrations/seeds (se necessário):
+
 ```bash
 pnpm run seed:exams
 ```
@@ -123,7 +153,8 @@ pnpm run start:prod
 pnpm run start:debug
 ```
 
-A API estará disponível em `http://localhost:3001` (ou na porta configurada no `.env`)
+A API estará disponível em `http://localhost:3001` (ou na porta configurada no
+`.env`)
 
 ## 🧪 Testes
 
@@ -153,37 +184,47 @@ pnpm run test:e2e
 
 ## 🔐 Autenticação
 
-A API utiliza autenticação baseada em JWT com refresh tokens armazenados em cookies HTTP-only:
+A API utiliza autenticação baseada em JWT com refresh tokens armazenados em
+cookies HTTP-only:
 
 - **Login**: `POST /auth/login` - Autentica o usuário e retorna tokens
 - **Refresh**: `POST /auth/refresh` - Renova os tokens de acesso
 - **Logout**: `POST /auth/logout` - Remove os cookies de autenticação
 
-Os tokens são enviados via cookies seguros para maior proteção contra ataques XSS.
+Os tokens são enviados via cookies seguros para maior proteção contra ataques
+XSS.
 
 ## 📚 Módulos Principais
 
 ### Auth Module
+
 Gerencia autenticação, autorização e controle de acesso:
+
 - Login com email e senha
 - Geração de JWT access tokens e refresh tokens
 - Guards para proteção de rotas
 - Hash de senhas com bcrypt
 
 ### Users Module
+
 CRUD completo de usuários:
+
 - Criação, leitura, atualização e exclusão de usuários
 - Controle de roles (Admin, etc.)
 - Validação de dados com class-validator
 
 ### Exams Module
+
 Gerenciamento de exames médicos:
+
 - Cadastro de exames com especialidade, preparação e duração
 - Seeds para popular dados iniciais
 - Relacionamento com agendamentos
 
 ### Schedules Module
+
 Sistema de agendamentos:
+
 - Criação de agendamentos vinculando usuários e exames
 - Controle de data, hora e status
 - Informações adicionais do paciente
@@ -191,6 +232,7 @@ Sistema de agendamentos:
 ## 🔧 Configurações
 
 A aplicação utiliza:
+
 - **ValidationPipe global**: Validação automática de DTOs
 - **CORS habilitado**: Configurado para aceitar requisições do frontend
 - **Cookie Parser**: Para gerenciamento de cookies de autenticação
@@ -202,4 +244,5 @@ Este projeto é privado e não possui licença pública.
 
 ## 👥 Contribuindo
 
-Este é um projeto privado. Para contribuições, entre em contato com a equipe de desenvolvimento.
+Este é um projeto privado. Para contribuições, entre em contato com a equipe de
+desenvolvimento.
