@@ -1,98 +1,205 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Aspect Hospitalar API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST desenvolvida em NestJS para gerenciamento de sistema hospitalar, incluindo controle de usuários, exames médicos e agendamentos.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Sobre o Projeto
 
-## Description
+A **Aspect Hospitalar API** é uma aplicação backend que fornece endpoints para gerenciar operações de um sistema hospitalar, permitindo:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Autenticação e Autorização**: Sistema de login com JWT, refresh tokens e controle de acesso baseado em roles
+- **Gestão de Usuários**: CRUD completo de usuários com diferentes níveis de permissão (Admin, etc.)
+- **Gestão de Exames**: Cadastro e gerenciamento de exames médicos com informações detalhadas (especialidade, preparação, duração)
+- **Agendamentos**: Sistema de agendamento que relaciona pacientes, exames e usuários, com controle de status e informações adicionais
 
-## Project setup
+## 🛠️ Tecnologias Utilizadas
 
-```bash
-$ pnpm install
+### Core Framework
+- **[NestJS](https://nestjs.com/)** (v11.0.1) - Framework Node.js progressivo para construção de aplicações server-side eficientes e escaláveis
+- **[TypeScript](https://www.typescriptlang.org/)** (v5.7.3) - Superset do JavaScript com tipagem estática
+
+### Banco de Dados
+- **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional
+- **[TypeORM](https://typeorm.io/)** (v0.3.28) - ORM para TypeScript e JavaScript
+- **[@nestjs/typeorm](https://docs.nestjs.com/techniques/database)** (v11.0.0) - Módulo TypeORM para NestJS
+
+### Autenticação e Segurança
+- **[@nestjs/jwt](https://docs.nestjs.com/security/authentication)** (v11.0.2) - Módulo JWT para NestJS
+- **[bcrypt](https://www.npmjs.com/package/bcrypt)** (v6.0.0) - Biblioteca para hash de senhas
+- **[cookie-parser](https://www.npmjs.com/package/cookie-parser)** (v1.4.7) - Middleware para parsing de cookies
+
+### Validação e Transformação
+- **[class-validator](https://github.com/typestack/class-validator)** (v0.14.3) - Validação de DTOs usando decorators
+- **[class-transformer](https://github.com/typestack/class-transformer)** (v0.5.1) - Transformação de objetos e classes
+
+### Configuração e Ambiente
+- **[@nestjs/config](https://docs.nestjs.com/techniques/configuration)** (v4.0.2) - Módulo de configuração do NestJS
+
+### Cache
+- **[@nestjs/cache-manager](https://docs.nestjs.com/techniques/caching)** (v3.1.0) - Sistema de cache para NestJS
+- **[cache-manager](https://www.npmjs.com/package/cache-manager)** (v7.2.8) - Gerenciador de cache
+
+### Desenvolvimento
+- **[ESLint](https://eslint.org/)** (v9.18.0) - Linter para JavaScript/TypeScript
+- **[Prettier](https://prettier.io/)** (v3.4.2) - Formatador de código
+- **[Jest](https://jestjs.io/)** (v30.0.0) - Framework de testes
+- **[pnpm](https://pnpm.io/)** - Gerenciador de pacotes rápido e eficiente
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── app/              # Módulo principal da aplicação
+├── auth/             # Módulo de autenticação (JWT, login, refresh token)
+├── users/            # Módulo de gerenciamento de usuários
+├── exams/            # Módulo de gerenciamento de exames médicos
+├── schedules/        # Módulo de agendamentos
+├── common/           # Utilitários e DTOs compartilhados
+├── database/         # Seeds e dados iniciais
+└── main.ts           # Arquivo de entrada da aplicação
 ```
 
-## Compile and run the project
+## 🚀 Como Executar
 
+### Pré-requisitos
+
+- Node.js (v18 ou superior)
+- PostgreSQL instalado e rodando
+- pnpm instalado globalmente (`npm install -g pnpm`)
+
+### Instalação
+
+1. Clone o repositório:
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+git clone <repository-url>
+cd aspect_hospitalar_api
 ```
 
-## Run tests
-
+2. Instale as dependências:
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm install
 ```
 
-## Deployment
+3. Configure as variáveis de ambiente:
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+# Database
+DB_TYPE=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+DB_DATABASE=nome_do_banco
+DB_SYNC=true
+DB_AUTOLOAD_ENTITIES=true
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+# JWT
+JWT_SECRET=seu_jwt_secret
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=seu_refresh_secret
+JWT_REFRESH_EXPIRES_IN=7d
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Application
+PORT=3001
+FRONTEND_URL=http://localhost:3000
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+4. Execute as migrations/seeds (se necessário):
+```bash
+pnpm run seed:exams
+```
 
-## Resources
+### Executando a Aplicação
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Modo desenvolvimento (com hot-reload)
+pnpm run start:dev
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Modo produção
+pnpm run build
+pnpm run start:prod
 
-## Support
+# Modo debug
+pnpm run start:debug
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+A API estará disponível em `http://localhost:3001` (ou na porta configurada no `.env`)
 
-## Stay in touch
+## 🧪 Testes
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# Testes unitários
+pnpm run test
 
-## License
+# Testes em modo watch
+pnpm run test:watch
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Testes com cobertura
+pnpm run test:cov
+
+# Testes end-to-end
+pnpm run test:e2e
+```
+
+## 📝 Scripts Disponíveis
+
+- `pnpm run build` - Compila o projeto TypeScript
+- `pnpm run format` - Formata o código com Prettier
+- `pnpm run start` - Inicia a aplicação
+- `pnpm run start:dev` - Inicia em modo desenvolvimento
+- `pnpm run start:prod` - Inicia em modo produção
+- `pnpm run lint` - Executa o linter e corrige problemas
+- `pnpm run seed:exams` - Executa seed de exames
+
+## 🔐 Autenticação
+
+A API utiliza autenticação baseada em JWT com refresh tokens armazenados em cookies HTTP-only:
+
+- **Login**: `POST /auth/login` - Autentica o usuário e retorna tokens
+- **Refresh**: `POST /auth/refresh` - Renova os tokens de acesso
+- **Logout**: `POST /auth/logout` - Remove os cookies de autenticação
+
+Os tokens são enviados via cookies seguros para maior proteção contra ataques XSS.
+
+## 📚 Módulos Principais
+
+### Auth Module
+Gerencia autenticação, autorização e controle de acesso:
+- Login com email e senha
+- Geração de JWT access tokens e refresh tokens
+- Guards para proteção de rotas
+- Hash de senhas com bcrypt
+
+### Users Module
+CRUD completo de usuários:
+- Criação, leitura, atualização e exclusão de usuários
+- Controle de roles (Admin, etc.)
+- Validação de dados com class-validator
+
+### Exams Module
+Gerenciamento de exames médicos:
+- Cadastro de exames com especialidade, preparação e duração
+- Seeds para popular dados iniciais
+- Relacionamento com agendamentos
+
+### Schedules Module
+Sistema de agendamentos:
+- Criação de agendamentos vinculando usuários e exames
+- Controle de data, hora e status
+- Informações adicionais do paciente
+
+## 🔧 Configurações
+
+A aplicação utiliza:
+- **ValidationPipe global**: Validação automática de DTOs
+- **CORS habilitado**: Configurado para aceitar requisições do frontend
+- **Cookie Parser**: Para gerenciamento de cookies de autenticação
+- **Cache Interceptor**: Para otimização de performance
+
+## 📄 Licença
+
+Este projeto é privado e não possui licença pública.
+
+## 👥 Contribuindo
+
+Este é um projeto privado. Para contribuições, entre em contato com a equipe de desenvolvimento.
