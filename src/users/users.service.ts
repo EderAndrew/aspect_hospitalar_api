@@ -118,4 +118,12 @@ export class UsersService {
 
     return { message: 'Usuário removido com sucesso.' };
   }
+
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({
+      email,
+    });
+
+    return user;
+  }
 }
