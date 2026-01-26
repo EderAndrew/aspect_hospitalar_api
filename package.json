@@ -19,10 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed:exams": "ts-node src/database/seeds/exam.seed.ts",
-    "seed:user": "ts-node --transpile-only -r tsconfig-paths/register src/database/seeds/user.seed.ts",
-    "migration:generate": "npx typeorm migration:generate -d src/typeorm.datasource.ts",
-    "migration:run": "npx typeorm migration:run -d src/typeorm.datasource.ts",
-    "migration:revert": "npx typeorm migration:revert -d src/typeorm.datasource.ts"
+    "seed:user": "ts-node --transpile-only -r tsconfig-paths/register src/database/seeds/user.seed.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.1.0",
