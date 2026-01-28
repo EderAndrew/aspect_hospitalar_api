@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -6,7 +9,9 @@ import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const server = app.getHttpAdapter().getInstance();
 
+  server.set('trust proxy', 1);
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
@@ -19,7 +24,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true, //When key dont exist up an error
     }),
   );
-
+  app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
