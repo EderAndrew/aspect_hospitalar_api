@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
   Inject,
@@ -19,6 +16,15 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { scheduleRelations, scheduleSelect } from './queries/schedule.query';
+import { PaginatedResponseDto } from './dto/paginated-response.dto';
+
+const SCHEDULES_CACHE_PREFIX = 'schedules:list';
+const SCHEDULES_ACTIVE_CACHE_PREFIX = 'schedules:active:list';
+
+const SCHEDULES_TOTAL_CACHE_KEY = 'schedules:total';
+const SCHEDULES_ACTIVE_TOTAL_CACHE_KEY = 'schedules:active:total';
+
+const SCHEDULES_CACHE_TTL = 60_000; // 1 minuto
 
 @Injectable()
 export class SchedulesService {
@@ -31,15 +37,21 @@ export class SchedulesService {
     private readonly cacheManager: Cache,
   ) {}
 
-  //Helper simples para invalidar cache de schedules
+  private getPaginatedCacheKey(
+    prefix: string,
+    limit: number,
+    offset: number,
+  ): string {
+    return `${prefix}:limit=${limit}:offset=${offset}`;
+  }
+
   private async invalidateSchedulesCache(): Promise<void> {
-    const store = this.cacheManager.stores as any;
-
-    if (store?.keys) {
-      const keys: string[] = store.keys('GET:/schedules*');
-
-      await Promise.all(keys.map(key => this.cacheManager.del(key)));
-    }
+    // Limpa apenas os totais
+    // As listas serão recriadas automaticamente
+    await Promise.all([
+      this.cacheManager.del(SCHEDULES_TOTAL_CACHE_KEY),
+      this.cacheManager.del(SCHEDULES_ACTIVE_TOTAL_CACHE_KEY),
+    ]);
   }
 
   async create(createScheduleDto: CreateScheduleDto) {
@@ -54,30 +66,54 @@ export class SchedulesService {
       date: createScheduleDto.date,
       time: createScheduleDto.time,
       status: createScheduleDto.status,
-      info: createScheduleDto.info,
+      info: createScheduleDto.info || '',
     });
 
     if (!schedule)
       throw new BadRequestException('Erro ao criar um novo agendamento.');
 
     await this.scheduleRepository.save(schedule);
-
     await this.invalidateSchedulesCache();
 
     return schedule;
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedResponseDto<Schedules>> {
     const { limit = 10, offset = 0 } = paginationDto;
+    const listCacheKey = this.getPaginatedCacheKey(
+      SCHEDULES_CACHE_PREFIX,
+      limit,
+      offset,
+    );
 
-    const schedules = await this.scheduleRepository.find({
+    const cachedList = await this.cacheManager.get<Schedules[]>(listCacheKey);
+
+    let total = await this.cacheManager.get<number>(SCHEDULES_TOTAL_CACHE_KEY);
+
+    if (total === undefined || total === null) {
+      total = await this.scheduleRepository.count();
+      await this.cacheManager.set(
+        SCHEDULES_TOTAL_CACHE_KEY,
+        total,
+        SCHEDULES_CACHE_TTL,
+      );
+    }
+    if (cachedList) {
+      return {
+        items: cachedList,
+        total,
+      };
+    }
+    const items: Schedules[] = await this.scheduleRepository.find({
       take: limit,
       skip: offset,
       relations: scheduleRelations,
       select: scheduleSelect,
     });
-
-    return schedules;
+    await this.cacheManager.set(listCacheKey, items, SCHEDULES_CACHE_TTL);
+    return { items, total };
   }
 
   async findOne(id: string) {
@@ -94,18 +130,52 @@ export class SchedulesService {
     return schedule;
   }
 
-  async findAllActives() {
-    const schedules = await this.scheduleRepository.find({
+  async findAllActives(
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedResponseDto<Schedules>> {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const listCacheKey = this.getPaginatedCacheKey(
+      SCHEDULES_ACTIVE_CACHE_PREFIX,
+      limit,
+      offset,
+    );
+
+    const cachedList = await this.cacheManager.get<Schedules[]>(listCacheKey);
+
+    let total = await this.cacheManager.get<number>(
+      SCHEDULES_ACTIVE_TOTAL_CACHE_KEY,
+    );
+
+    if (total === undefined || total === null) {
+      total = await this.scheduleRepository.count({
+        where: { status: true },
+      });
+
+      await this.cacheManager.set(
+        SCHEDULES_ACTIVE_TOTAL_CACHE_KEY,
+        total,
+        SCHEDULES_CACHE_TTL,
+      );
+    }
+
+    if (cachedList) {
+      return { items: cachedList, total };
+    }
+
+    const items = await this.scheduleRepository.find({
       where: {
         status: true,
       },
+      take: limit,
+      skip: offset,
       relations: scheduleRelations,
       select: scheduleSelect,
     });
 
-    if (!schedules) throw new NotFoundException('Agendamentos não encontrados');
+    if (!items) throw new NotFoundException('Agendamentos não encontrados');
+    await this.cacheManager.set(listCacheKey, items, SCHEDULES_CACHE_TTL);
 
-    return schedules;
+    return { items, total };
   }
 
   async update(id: string, updateScheduleDto: UpdateScheduleDto) {
@@ -136,9 +206,5 @@ export class SchedulesService {
     await this.invalidateSchedulesCache();
 
     return { message: 'Agendamento removido com sucesso.' };
-  }
-
-  getSchedule(limit: any, offset: any) {
-    return `Pegando os agendamentos: ${limit}, ${offset}`;
   }
 }

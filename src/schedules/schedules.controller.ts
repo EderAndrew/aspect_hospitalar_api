@@ -17,6 +17,7 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
+import { PaginatedResponseDto } from './dto/paginated-response.dto';
 
 @UseGuards(AuthTokenGuard)
 @Controller('schedules')
@@ -30,7 +31,9 @@ export class SchedulesController {
 
   @UseInterceptors(HandlerCacheInterceptor)
   @Get('allSchedules')
-  findAll(@Query() paginationDto: PaginationDto): Promise<Schedules[]> {
+  findAll(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<PaginatedResponseDto<Schedules>> {
     return this.scheduleService.findAll(paginationDto);
   }
 
@@ -42,8 +45,10 @@ export class SchedulesController {
 
   @UseInterceptors(HandlerCacheInterceptor)
   @Get('allActiveSchedules')
-  findActives(): Promise<Schedules[]> {
-    return this.scheduleService.findAllActives();
+  findActives(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<PaginatedResponseDto<Schedules>> {
+    return this.scheduleService.findAllActives(paginationDto);
   }
 
   @Patch('updateSchedule/:id')
