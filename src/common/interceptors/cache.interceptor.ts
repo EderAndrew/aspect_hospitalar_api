@@ -1,37 +1,47 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Request } from 'express';
-import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable, of, tap } from 'rxjs';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
-interface CacheEntry {
-  data: unknown;
-  expiresAt: number;
-}
-
+@Injectable()
 export class HandlerCacheInterceptor implements NestInterceptor {
-  private readonly cache = new Map<string, CacheEntry>();
-  private readonly ttl = 60 * 1000; //1 minute
+  private readonly defaultTtl = 60 * 1000; // 1 minuto
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
+
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest<Request>();
 
+    // Apenas cacheia requisições GET
     if (request.method !== 'GET') {
       return next.handle();
     }
 
     const cacheKey = this.buildCacheKey(request);
-    const cached = this.cache.get(cacheKey);
 
-    if (cached && cached.expiresAt > Date.now()) {
+    // Tenta buscar do cache
+    const cached = await this.cacheManager.get(cacheKey);
+
+    if (cached) {
       console.log('Cache HIT: ', cacheKey);
-      return of(cached.data);
+      return of(cached);
     }
 
+    // Se não encontrou no cache, executa o handler e cacheia o resultado
     return next.handle().pipe(
-      tap(data => {
-        this.cache.set(cacheKey, {
-          data,
-          expiresAt: Date.now() + this.ttl,
-        });
+      tap(async data => {
+        await this.cacheManager.set(cacheKey, data, this.defaultTtl);
         console.log('Cache SET: ', cacheKey);
       }),
     );
@@ -39,6 +49,11 @@ export class HandlerCacheInterceptor implements NestInterceptor {
 
   private buildCacheKey(request: Request): string {
     const userId = request.user?.id ?? 'anonymous';
-    return `${request.method}:${request.originalUrl}:user:${userId}`;
+    const queryString = new URLSearchParams(
+      request.query as Record<string, string>,
+    ).toString();
+    const queryPart = queryString ? `?${queryString}` : '';
+
+    return `${request.method}:${request.originalUrl}${queryPart}:user:${userId}`;
   }
 }

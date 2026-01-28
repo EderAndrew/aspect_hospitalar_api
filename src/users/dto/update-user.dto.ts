@@ -6,11 +6,11 @@ import { UserRole } from '../enums/user-role.enum';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsString()
-  name: string;
+  readonly name: string;
 
   @IsOptional()
   @IsString()
-  password: string;
+  readonly password: string;
 
   @IsOptional()
   @IsString()
@@ -18,9 +18,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsString()
   @IsOptional()
-  role: UserRole;
+  readonly role: UserRole;
 
   @IsBoolean()
   @IsOptional()
-  status: boolean;
+  readonly status: boolean;
 }

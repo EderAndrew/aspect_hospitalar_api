@@ -16,8 +16,8 @@ import { Schedules } from './entities/schedules.entity';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
-import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
+import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
 @UseGuards(AuthTokenGuard)
 @Controller('schedules')

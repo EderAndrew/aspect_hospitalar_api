@@ -9,26 +9,26 @@ import {
 
 export class CreateScheduleDto {
   @IsUUID()
-  userId: string;
+  readonly userId: string;
 
   @IsUUID()
-  examId: string;
+  readonly examId: string;
 
   @IsNotEmpty()
   @IsString()
-  patient: string;
+  readonly patient: string;
 
   @IsNotEmpty()
   @IsDateString()
-  date: string;
+  readonly date: string;
 
   @IsNotEmpty()
   @IsString()
-  time: string;
+  readonly time: string;
 
   @IsOptional()
   @IsString()
-  info?: string;
+  readonly info?: string;
 
   @IsNotEmpty()
   @IsBoolean()

@@ -51,6 +51,9 @@ export class Schedules {
   @Column({ type: 'boolean', default: true })
   status: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  finished: boolean;
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date;
 
