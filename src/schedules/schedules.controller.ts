@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -17,7 +16,7 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
-import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
+//import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
 @UseGuards(AuthTokenGuard)
 @Controller('schedules')
@@ -29,7 +28,7 @@ export class SchedulesController {
     return this.scheduleService.create(createScheduleDto);
   }
 
-  @UseInterceptors(HandlerCacheInterceptor)
+  //@UseInterceptors(HandlerCacheInterceptor)
   @Get('allSchedules')
   findAll(
     @Query() paginationDto: PaginationDto,
@@ -37,13 +36,13 @@ export class SchedulesController {
     return this.scheduleService.findAll(paginationDto);
   }
 
-  @UseInterceptors(HandlerCacheInterceptor)
+  //@UseInterceptors(HandlerCacheInterceptor)
   @Get('schedule/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Schedules> {
     return this.scheduleService.findOne(id);
   }
 
-  @UseInterceptors(HandlerCacheInterceptor)
+  //@UseInterceptors(HandlerCacheInterceptor)
   @Get('allActiveSchedules')
   findActives(
     @Query() paginationDto: PaginationDto,

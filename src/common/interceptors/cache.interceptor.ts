@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { Request } from 'express';
+/*import { Request } from 'express';
 import {
   CallHandler,
   ExecutionContext,
@@ -23,14 +22,12 @@ export class HandlerCacheInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    // Apenas cacheia requisições GET
     if (request.method !== 'GET') {
       return next.handle();
     }
 
     const cacheKey = this.buildCacheKey(request);
 
-    // Tenta buscar do cache
     const cached = await this.cacheManager.get(cacheKey);
 
     if (cached) {
@@ -38,7 +35,6 @@ export class HandlerCacheInterceptor implements NestInterceptor {
       return of(cached);
     }
 
-    // Se não encontrou no cache, executa o handler e cacheia o resultado
     return next.handle().pipe(
       tap(async data => {
         await this.cacheManager.set(cacheKey, data, this.defaultTtl);
@@ -56,4 +52,4 @@ export class HandlerCacheInterceptor implements NestInterceptor {
 
     return `${request.method}:${request.originalUrl}${queryPart}:user:${userId}`;
   }
-}
+}*/
