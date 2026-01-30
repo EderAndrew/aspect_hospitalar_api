@@ -3,6 +3,27 @@
 API REST desenvolvida em NestJS para gerenciamento de sistema hospitalar,
 incluindo controle de usuários, exames médicos e agendamentos.
 
+**Versão**: 0.0.1 | **Node.js**: v18+ | **Banco**: PostgreSQL | **Gerenciador**: pnpm
+
+---
+
+## 📑 Índice
+
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Como Executar](#-como-executar)
+- [Testes](#-testes)
+- [Scripts Disponíveis](#-scripts-disponíveis)
+- [Autenticação](#-autenticação)
+- [Módulos Principais](#-módulos-principais)
+- [Configurações](#-configurações)
+- [Seeds](#-seeds)
+- [Deployment com PM2](#-deployment-com-pm2)
+- [Atualizações Recentes](#-atualizações-recentes-v001)
+
+---
+
 ## 📋 Sobre o Projeto
 
 A **Aspect Hospitalar API** é uma aplicação backend que fornece endpoints para
@@ -213,6 +234,46 @@ cookies HTTP-only:
 Os tokens são enviados via cookies seguros para maior proteção contra ataques
 XSS.
 
+## 🔌 Endpoints da API
+
+### Authentication
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/auth/login` | Realizar login |
+| POST | `/auth/refresh` | Renovar tokens |
+| POST | `/auth/logout` | Realizar logout |
+
+### Users
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/users/createUser` | Criar novo usuário |
+| GET | `/users/findUsers` | Listar todos os usuários |
+| GET | `/users/user/:id` | Obter usuário por ID |
+| GET | `/users/me` | Obter dados do usuário autenticado |
+| PATCH | `/users/user/:id` | Atualizar usuário |
+| DELETE | `/users/user/:id` | Deletar usuário |
+
+### Exams
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/exams/createExam` | Criar novo exame |
+| GET | `/exams/findExams` | Listar todos os exames |
+| GET | `/exams/exam/:id` | Obter exame por ID |
+| DELETE | `/exams/exam/:id` | Deletar exame |
+
+### Schedules
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/schedules/create` | Criar novo agendamento |
+| GET | `/schedules/allSchedules` | Listar todos os agendamentos (paginado) |
+| GET | `/schedules/schedule/:id` | Obter agendamento por ID |
+| GET | `/schedules/allActiveSchedules` | Listar agendamentos ativos (paginado) |
+| PATCH | `/schedules/schedule/:id` | Atualizar agendamento |
+
+**Nota**: Todos os endpoints (exceto `/auth/login`) requerem autenticação com JWT.
+
+## 📋 Autenticação
+
 ## 📚 Módulos Principais
 
 ### Auth Module
@@ -277,7 +338,52 @@ Cria um usuário inicial no sistema. Requer as seguintes variáveis de ambiente 
 
 **Nota**: O seed verifica se o usuário já existe antes de criar. Se o email já estiver cadastrado, o seed não criará um novo usuário.
 
-## 📄 Licença
+## � Deployment com PM2
+
+O projeto está configurado para rodar em produção com PM2 (Process Manager 2):
+
+```bash
+# Instalar PM2 globalmente
+npm install -g pm2
+
+# Compilar e iniciar com PM2
+pnpm run build
+pm2 start ecosystem.config.js --env production
+
+# Monitorar processos
+pm2 monit
+
+# Ver logs
+pm2 logs aspect_hospitalar_api
+
+# Parar a aplicação
+pm2 stop aspect_hospitalar_api
+
+# Reiniciar a aplicação
+pm2 restart aspect_hospitalar_api
+```
+
+**Configuração PM2**:
+- Memory limit: 512MB
+- Auto-restart: Ativado
+- Logs: Armazenados em `./logs/`
+- Kill timeout: 5 segundos
+- Listen timeout: 5 segundos
+
+## 🔄 Atualizações Recentes (v0.0.1)
+
+- ✅ Sistema completo de autenticação com JWT e refresh tokens
+- ✅ Gestão de usuários com controle de roles
+- ✅ Módulo de exames médicos com seeds
+- ✅ Sistema de agendamentos com relacionamentos
+- ✅ Cache com interceptor de performance
+- ✅ Proteção de segurança (Helmet, CSRF)
+- ✅ Validação automática com class-validator
+- ✅ Seeds para popular dados iniciais
+- ✅ Configuração com variáveis de ambiente
+- ✅ Setup completo para produção com PM2
+
+## �📄 Licença
 
 Este projeto é privado e não possui licença pública.
 
