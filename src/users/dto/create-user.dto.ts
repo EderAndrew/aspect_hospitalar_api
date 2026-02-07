@@ -22,17 +22,17 @@ export class CreateUserDto {
   readonly email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MinLength(6)
-  readonly password: string;
+  readonly password?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(UserRole)
-  readonly role: UserRole;
+  readonly role?: UserRole;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  readonly status: boolean;
+  readonly status?: boolean;
 
   @IsOptional()
   @IsString()

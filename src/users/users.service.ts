@@ -23,7 +23,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await this.hashingService.hash(
-      createUserDto.password,
+      createUserDto?.password as string,
     );
 
     const newUser = {

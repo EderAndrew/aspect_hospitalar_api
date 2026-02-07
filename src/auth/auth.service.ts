@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -31,7 +36,7 @@ export class AuthService {
       });
 
       if (userExists) {
-        return { message: 'Usuário já existe.' };
+        throw new ConflictException('Email ou CPF já cadastrado');
       }
 
       const hash = randomNumberCode();
@@ -40,8 +45,9 @@ export class AuthService {
       const user = manager.create(User, {
         name: createUserDto.name,
         cpf: createUserDto.cpf,
-        phone: createUserDto.phone || '',
+        phone: createUserDto.phone ?? undefined,
         email: createUserDto.email,
+        avatar: createUserDto.avatar ?? undefined,
         password: hashedPassword,
         role: UserRole.PATIENT,
         status: true,

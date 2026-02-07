@@ -29,7 +29,7 @@ export class User {
     onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'planId' })
-  plan: Plan;
+  plan?: Plan;
 
   @Column({ length: 100 })
   @IsNotEmpty()

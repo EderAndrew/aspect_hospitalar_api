@@ -3,10 +3,16 @@ import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { setAuthCookies } from './cookie.helper';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('signup')
+  async signup(@Body() createUserDto: CreateUserDto) {
+    return this.authService.signup(createUserDto);
+  }
 
   @Post('login')
   async login(
@@ -18,7 +24,7 @@ export class AuthController {
 
     setAuthCookies(res, accessToken, refreshToken);
 
-    return { success: true };
+    return { accessToken, refreshToken };
   }
 
   @Post('refresh')
@@ -31,7 +37,7 @@ export class AuthController {
 
     setAuthCookies(res, newAccessToken, newRefreshToken);
 
-    return { success: true };
+    return { newAccessToken, newRefreshToken };
   }
 
   @Post('logout')
