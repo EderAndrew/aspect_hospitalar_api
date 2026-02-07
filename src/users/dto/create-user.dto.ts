@@ -26,10 +26,6 @@ export class CreateUserDto {
   @MinLength(6)
   readonly password: string;
 
-  @IsOptional()
-  @IsString()
-  readonly avatar?: string;
-
   @IsNotEmpty()
   @IsEnum(UserRole)
   readonly role: UserRole;
@@ -37,4 +33,16 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsBoolean()
   readonly status: boolean;
+
+  @IsOptional()
+  @IsString()
+  readonly avatar?: string;
+
+  @IsString()
+  @IsOptional()
+  readonly phone?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly cpf: string;
 }

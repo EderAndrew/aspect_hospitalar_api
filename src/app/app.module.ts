@@ -9,6 +9,7 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
 import appConfig from './app.config';
 import { AuthModule } from 'src/auth/auth.module';
 import { SchedulesModule } from 'src/schedules/schedules.module';
+import { PlansModule } from 'src/plans/plans.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SchedulesModule } from 'src/schedules/schedules.module';
     ExamsModule,
     SchedulesModule,
     AuthModule,
+    PlansModule,
   ],
   controllers: [AppController],
   providers: [AppService],

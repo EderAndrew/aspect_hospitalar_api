@@ -17,15 +17,15 @@ export class Schedules {
   id: string;
 
   @ManyToOne(() => User, user => user.schedules, {
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @ManyToOne(() => Exam, exam => exam.schedules, {
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'examId' })
   exam: Exam;
