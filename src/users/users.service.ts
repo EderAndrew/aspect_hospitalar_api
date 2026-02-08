@@ -76,7 +76,7 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('Usuário não encontrado.');
 
-    return { user };
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
