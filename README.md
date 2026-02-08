@@ -3,7 +3,7 @@
 API REST desenvolvida em NestJS para gerenciamento de sistema hospitalar,
 incluindo controle de usuários, exames médicos e agendamentos.
 
-**Versão**: 0.0.1 | **Node.js**: v18+ | **Banco**: PostgreSQL | **Gerenciador**: pnpm
+**Versão**: 0.0.2 | **Node.js**: v18+ | **Banco**: PostgreSQL | **Gerenciador**: pnpm
 
 ---
 
@@ -239,6 +239,7 @@ XSS.
 ### Authentication
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
+| POST | `/auth/signup` | Criar novo usuário (registro) |
 | POST | `/auth/login` | Realizar login |
 | POST | `/auth/refresh` | Renovar tokens |
 | POST | `/auth/logout` | Realizar logout |
@@ -261,6 +262,13 @@ XSS.
 | GET | `/exams/exam/:id` | Obter exame por ID |
 | DELETE | `/exams/exam/:id` | Deletar exame |
 
+### Plans
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/plans/createPlan` | Criar novo plano |
+| GET | `/plans/allPlans` | Listar todos os planos |
+| GET | `/plans/plan/:id` | Obter plano por ID |
+
 ### Schedules
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -268,7 +276,8 @@ XSS.
 | GET | `/schedules/allSchedules` | Listar todos os agendamentos (paginado) |
 | GET | `/schedules/schedule/:id` | Obter agendamento por ID |
 | GET | `/schedules/allActiveSchedules` | Listar agendamentos ativos (paginado) |
-| PATCH | `/schedules/schedule/:id` | Atualizar agendamento |
+| PATCH | `/schedules/updateSchedule/:id` | Atualizar agendamento |
+| PATCH | `/schedules/removeSchedule/:id` | Remover/Marcar agendamento como removido |
 
 **Nota**: Todos os endpoints (exceto `/auth/login`) requerem autenticação com JWT.
 
@@ -370,18 +379,13 @@ pm2 restart aspect_hospitalar_api
 - Kill timeout: 5 segundos
 - Listen timeout: 5 segundos
 
-## 🔄 Atualizações Recentes (v0.0.1)
+## 🔄 Atualizações Recentes (v0.0.2)
 
-- ✅ Sistema completo de autenticação com JWT e refresh tokens
-- ✅ Gestão de usuários com controle de roles
-- ✅ Módulo de exames médicos com seeds
-- ✅ Sistema de agendamentos com relacionamentos
-- ✅ Cache com interceptor de performance
-- ✅ Proteção de segurança (Helmet, CSRF)
-- ✅ Validação automática com class-validator
-- ✅ Seeds para popular dados iniciais
-- ✅ Configuração com variáveis de ambiente
-- ✅ Setup completo para produção com PM2
+- ✅ Adicionado módulo `plans` com endpoints de criação e listagem de planos
+- ✅ Endpoint público de registro `POST /auth/signup` adicionado
+- ✅ Ajustes nas rotas de `schedules`: `updateSchedule/:id` e `removeSchedule/:id`
+- ✅ Correções na documentação de endpoints e exemplos
+- ✅ Bump de versão para `v0.0.2`
 
 ## �📄 Licença
 
