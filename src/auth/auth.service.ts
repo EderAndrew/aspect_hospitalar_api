@@ -2,6 +2,7 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,6 +17,7 @@ import { Request } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UserRole } from 'src/users/enums/user-role.enum';
 import { randomNumberCode } from 'src/utils/randomnumberCode';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +29,7 @@ export class AuthService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async signup(createUserDto: CreateUserDto): Promise<{ message: string }> {
@@ -53,8 +56,22 @@ export class AuthService {
         status: true,
       });
 
-      await manager.save(user);
-      return { message: 'Usuário criado com sucesso!' };
+      const newUser = await manager.save(user);
+
+      if (!newUser) {
+        throw new InternalServerErrorException('Erro ao criar usuário');
+      }
+
+      await this.emailService.sendEmail(
+        createUserDto.email,
+        'Senha de acesso Hospital Portal',
+        `Segue senha para o seu primeiro acesso ao sistema Hospital Portal: ${hash}`,
+      );
+
+      return {
+        message:
+          'Usuário criado com sucesso. Acesse o email para verificar a senha do primeiro acesso.',
+      };
     });
   }
 

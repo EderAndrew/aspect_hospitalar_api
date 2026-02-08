@@ -12,6 +12,8 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from 'src/auth/hashing/hashing.service';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { EmailService } from 'src/email/email.service';
+import { userRelations, userSelect } from './queries/user.query';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +21,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly hashingService: HashingService,
+    private readonly emailService: EmailService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -67,18 +70,13 @@ export class UsersService {
       where: {
         id: tokenPayload.sub,
       },
+      relations: userRelations,
+      select: userSelect,
     });
 
     if (!user) throw new NotFoundException('Usuário não encontrado.');
 
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      avatar: user.avatar,
-      status: user.status,
-    };
+    return { user };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
