@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import appConfig from './app.config';
 import type { ConfigType } from '@nestjs/config';
 
-@Controller('api')
+@Controller('app')
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -11,8 +11,8 @@ export class AppController {
     private readonly appConfiguration: ConfigType<typeof appConfig>,
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('ping')
+  ping() {
+    return this.appService.pong();
   }
 }

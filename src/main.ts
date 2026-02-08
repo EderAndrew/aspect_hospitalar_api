@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -15,7 +17,21 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin: any, callback: any) => {
+      if (!origin) return callback(null, true); // mobile
+
+      const allowed = [
+        process.env.FRONTEND_URL,
+        'http://localhost:3000',
+        'http://localhost:19006',
+      ];
+
+      if (allowed.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   });
   app.useGlobalPipes(
