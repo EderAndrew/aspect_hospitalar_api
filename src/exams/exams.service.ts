@@ -16,13 +16,7 @@ export class ExamsService {
   ) {}
 
   async create(createExamDto: CreateExamDto) {
-    const newExam = {
-      ...createExamDto,
-    };
-
-    const exam = this.examRepository.create(newExam);
-
-    if (!exam) throw new BadRequestException('Erro ao criar um novo exame.');
+    const exam = this.examRepository.create(createExamDto);
 
     await this.examRepository.save(exam);
 
