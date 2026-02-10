@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ConflictException,
   Inject,
@@ -107,8 +109,9 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async refresh(req: Request) {
-    const refreshToken = req.cookies?.refresh_token as string;
+  async refresh(req: Request, refreshTokenBody: string) {
+    const refreshToken = refreshTokenBody || req.cookies?.refresh_token;
+
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token ausente.');
     }

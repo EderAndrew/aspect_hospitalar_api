@@ -50,6 +50,11 @@ export class SchedulesController {
     return this.scheduleService.findAllActives(paginationDto);
   }
 
+  @Get('allUserSchedules/:id')
+  findByUserId(@Param('id', ParseUUIDPipe) id: string): Promise<Schedules[]> {
+    return this.scheduleService.findByUserId(id);
+  }
+
   @Patch('updateSchedule/:id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

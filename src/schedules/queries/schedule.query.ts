@@ -14,6 +14,7 @@ export const scheduleSelect: FindOptionsSelect<Schedules> = {
   patient: true,
   info: true,
   user: {
+    id: true,
     name: true,
   },
   exam: {

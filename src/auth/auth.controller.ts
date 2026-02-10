@@ -35,13 +35,15 @@ export class AuthController {
   @UseInterceptors(CookieInterceptor)
   @Post('refresh')
   async refresh(
-    @Res({ passthrough: true }) res: Response,
+    @Body('refreshToken') refreshToken: string,
     @Req() req: Request,
   ) {
-    const { newAccessToken, newRefreshToken } =
-      await this.authService.refresh(req);
+    const { newAccessToken, newRefreshToken } = await this.authService.refresh(
+      req,
+      refreshToken,
+    );
 
-    return { newAccessToken, newRefreshToken };
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
   @Post('logout')

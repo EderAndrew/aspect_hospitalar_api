@@ -106,6 +106,19 @@ export class SchedulesService {
     return { items, total };
   }
 
+  async findByUserId(id: string): Promise<Schedules[]> {
+    const items = await this.scheduleRepository.find({
+      where: {
+        user: { id },
+        status: true,
+      },
+      relations: scheduleRelations,
+      select: scheduleSelect,
+    });
+
+    return items;
+  }
+
   async update(id: string, updateScheduleDto: UpdateScheduleDto) {
     const schedule = await this.scheduleRepository.preload({
       id,
