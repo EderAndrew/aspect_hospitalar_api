@@ -1,5 +1,5 @@
 import { FindOptionsSelect, FindOptionsRelations } from 'typeorm';
-import { Schedules } from '../entities/schedules.entity';
+import { Schedules } from '../entities/appointment.entity';
 
 export const scheduleRelations: FindOptionsRelations<Schedules> = {
   user: true,

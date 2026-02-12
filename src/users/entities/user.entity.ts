@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,6 +16,8 @@ import {
   IsString,
 } from 'class-validator';
 import { Patient } from 'src/patients/entities/patient.entity';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Entity('users')
 export class User {
@@ -51,12 +54,18 @@ export class User {
   @Column({ default: true })
   status: boolean;
 
+  @OneToOne(() => Patient, patient => patient.user)
+  patient?: Patient;
+
+  @OneToOne(() => Doctor, doctor => doctor.user)
+  doctor?: Doctor;
+
+  @OneToMany(() => Appointment, appointment => appointment.scheduledBy)
+  appointments?: Appointment[];
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt?: Date;
-
-  @OneToOne(() => Patient, patient => patient.user)
-  patient?: Patient;
 }

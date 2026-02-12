@@ -5,29 +5,27 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-import { Schedules } from './entities/schedules.entity';
 import { UsersService } from 'src/users/users.service';
 import { ExamsService } from 'src/exams/exams.service';
-import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { scheduleRelations, scheduleSelect } from './queries/schedule.query';
+import { scheduleRelations, scheduleSelect } from './queries/appointment.query';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
 import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
+import { Appointment } from './entities/appointment.entity';
+import { CreateAppointmentDto } from './dto/create-appointment.dto';
 
 @Injectable()
-export class SchedulesService {
+export class AppointmentsService {
   constructor(
-    @InjectRepository(Schedules)
-    private readonly scheduleRepository: Repository<Schedules>,
+    @InjectRepository(Appointment)
+    private readonly scheduleRepository: Repository<Appointment>,
     private readonly usersService: UsersService,
     private readonly examsService: ExamsService,
     private readonly cacheInvalidationService: CacheInvalidationService,
   ) {}
 
-  async create(createScheduleDto: CreateScheduleDto) {
-    const { userId, examId } = createScheduleDto;
+  async create(createAppointmentDto: CreateAppointmentDto) {
+    const { userId, examId } = createAppointmentDto;
     const user = await this.usersService.findOne(userId);
     const exam = await this.examsService.findOne(examId);
 

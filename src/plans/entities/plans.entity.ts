@@ -4,11 +4,10 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { PlanType } from '../enums/plan-type.enum';
-import { User } from 'src/users/entities/user.entity';
+import { Patient } from 'src/patients/entities/patient.entity';
 
 @Entity('plans')
 export class Plan {
@@ -25,14 +24,11 @@ export class Plan {
   type: PlanType;
 
   @Column({ default: true })
-  status: boolean;
+  is_active: boolean;
+
+  @OneToMany(() => Patient, patient => patient.plan)
+  patients?: Patient[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt?: Date;
-
-  @OneToMany(() => User, user => user.plan)
-  users: User[];
 }

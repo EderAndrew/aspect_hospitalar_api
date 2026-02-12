@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import appConfig from './app.config';
 import { AuthModule } from 'src/auth/auth.module';
-import { SchedulesModule } from 'src/schedules/schedules.module';
+import { AppointmentsModule } from 'src/appointments/appointments.module';
 import { PlansModule } from 'src/plans/plans.module';
 
 @Module({
@@ -33,7 +33,7 @@ import { PlansModule } from 'src/plans/plans.module';
     }),
     UsersModule,
     ExamsModule,
-    SchedulesModule,
+    AppointmentsModule,
     AuthModule,
     PlansModule,
   ],

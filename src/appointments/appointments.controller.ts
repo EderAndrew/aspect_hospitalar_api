@@ -9,31 +9,30 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { SchedulesService } from './schedules.service';
-import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { Schedules } from './entities/schedules.entity';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
+import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { Appointment } from './entities/appointment.entity';
+import { AppointmentsService } from './appointments.service';
 //import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
 @UseGuards(AuthTokenGuard)
-@Controller('schedules')
-export class SchedulesController {
-  constructor(private readonly scheduleService: SchedulesService) {}
+@Controller('appointments')
+export class AppointmentsController {
+  constructor(private readonly appointmentService: AppointmentsService) {}
 
   @Post('create')
-  create(@Body() createScheduleDto: CreateScheduleDto): Promise<any> {
-    return this.scheduleService.create(createScheduleDto);
+  create(@Body() createAppointmentDto: CreateAppointmentDto): Promise<any> {
+    return this.appointmentService.create(createAppointmentDto);
   }
 
   //@UseInterceptors(HandlerCacheInterceptor)
   @Get('allSchedules')
   findAll(
     @Query() paginationDto: PaginationDto,
-  ): Promise<PaginatedResponseDto<Schedules>> {
-    return this.scheduleService.findAll(paginationDto);
+  ): Promise<PaginatedResponseDto<Appointment>> {
+    return this.appointmentService.findAll(paginationDto);
   }
 
   //@UseInterceptors(HandlerCacheInterceptor)

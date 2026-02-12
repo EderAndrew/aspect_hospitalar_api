@@ -12,6 +12,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Gender } from '../enums/gender.enum';
+import { Plan } from 'src/plans/entities/plans.entity';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Entity('patients')
 export class Patient {
@@ -54,6 +56,16 @@ export class Patient {
 
   @OneToMany(() => Patient, patient => patient.responsible)
   dependents?: Patient[];
+
+  @ManyToOne(() => Plan, plan => plan.patients, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'plan_id' })
+  plan?: Plan;
+
+  @OneToMany(() => Appointment, appointment => appointment.patient)
+  appointments?: Appointment[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date;

@@ -7,7 +7,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class CreateScheduleDto {
+export class CreateAppointmentDto {
   @IsUUID()
   readonly userId: string;
 
