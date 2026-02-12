@@ -2,9 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,22 +14,14 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Schedules } from 'src/schedules/entities/schedules.entity';
-import { Plan } from 'src/plans/entities/plans.entity';
+import { Patient } from 'src/patients/entities/patient.entity';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Plan, plan => plan.users, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'planId' })
-  plan?: Plan;
-
-  @Column({ length: 100 })
+  @Column({ length: 200 })
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -44,11 +34,15 @@ export class User {
   @Column({ length: 255, select: false })
   @IsNotEmpty()
   @IsString()
-  password: string;
+  hash_password: string;
 
   @Column({ length: 255 })
   @IsOptional()
-  avatar?: string;
+  photo?: string;
+
+  @Column({ length: 255 })
+  @IsOptional()
+  photo_url?: string;
 
   @IsEnum(UserRole)
   @Column({ type: 'enum', enum: UserRole, default: UserRole.ADMIN })
@@ -57,20 +51,12 @@ export class User {
   @Column({ default: true })
   status: boolean;
 
-  @Column({ length: 255, default: null })
-  @IsOptional()
-  phone?: string;
-
-  @Column({ length: 11, unique: true })
-  @IsNotEmpty()
-  cpf: string;
-
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt?: Date;
 
-  @OneToMany(() => Schedules, schedule => schedule.user)
-  schedules: Schedules[];
+  @OneToOne(() => Patient, patient => patient.user)
+  patient?: Patient;
 }
