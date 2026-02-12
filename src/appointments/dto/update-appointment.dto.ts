@@ -1,26 +1,42 @@
-import { PartialType } from '@nestjs/mapped-types';
+import {
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { AppointmentStatus } from '../enums/appointmentStatus.enum';
 
-import { IsBoolean, IsDateString, IsOptional, IsString } from 'class-validator';
-import { CreateAppointmentDto } from './create-appointment.dto';
+export class UpdateAppointmentDto {
+  @IsOptional()
+  @IsUUID()
+  patient_id?: string;
 
-export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {
+  @IsOptional()
+  @IsUUID()
+  doctor_id?: string;
+
+  @IsOptional()
+  @IsUUID()
+  room_id?: string;
+
+  @IsOptional()
+  @IsUUID()
+  exam_id?: string;
+
   @IsOptional()
   @IsDateString()
-  readonly date?: string;
+  start_time?: string;
+
+  @IsOptional()
+  @IsDateString()
+  end_time?: string;
+
+  @IsOptional()
+  @IsEnum(AppointmentStatus)
+  status?: AppointmentStatus;
 
   @IsOptional()
   @IsString()
-  readonly time?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly info?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  readonly status?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  readonly finished?: boolean;
+  notes?: string;
 }

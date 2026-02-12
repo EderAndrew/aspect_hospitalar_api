@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsOptional,
@@ -9,28 +8,30 @@ import {
 
 export class CreateAppointmentDto {
   @IsUUID()
-  readonly userId: string;
+  @IsNotEmpty()
+  readonly patient_id: string;
 
   @IsUUID()
-  readonly examId: string;
-
   @IsNotEmpty()
-  @IsString()
-  readonly patient: string;
+  readonly exam_id: string;
 
+  @IsUUID()
   @IsNotEmpty()
+  readonly doctor_id: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  readonly room_id: string;
+
   @IsDateString()
-  readonly date: string;
-
   @IsNotEmpty()
-  @IsString()
-  readonly time: string;
+  readonly start_time: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  readonly end_time: string;
 
   @IsOptional()
   @IsString()
-  readonly info?: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  readonly status: boolean;
+  readonly notes?: string;
 }
