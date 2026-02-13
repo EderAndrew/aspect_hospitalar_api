@@ -1,24 +1,24 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../enums/user-role.enum';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @IsUUID()
-  @IsOptional()
-  readonly planId: string;
-
   @IsOptional()
   @IsString()
   readonly name: string;
 
   @IsOptional()
   @IsString()
-  readonly password: string;
+  readonly hash_password: string;
 
-  @IsOptional()
   @IsString()
-  readonly avatar?: string;
+  @IsOptional()
+  photo?: string;
+
+  @IsString()
+  @IsOptional()
+  photo_url?: string;
 
   @IsString()
   @IsOptional()
@@ -27,8 +27,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsBoolean()
   @IsOptional()
   readonly status: boolean;
-
-  @IsString()
-  @IsOptional()
-  readonly phone?: string;
 }

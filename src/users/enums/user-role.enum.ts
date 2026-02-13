@@ -3,4 +3,5 @@ export enum UserRole {
   ATTENDANT = 'ATTENDANT',
   DOCTOR = 'DOCTOR',
   PATIENT = 'PATIENT',
+  TESTER = 'TESTER',
 }

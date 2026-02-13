@@ -35,7 +35,7 @@ export class User {
   email: string;
 
   @Column({ length: 255, select: false })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   hash_password: string;
 

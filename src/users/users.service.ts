@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   HttpCode,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,7 +15,9 @@ import { Repository } from 'typeorm';
 import { HashingService } from 'src/auth/hashing/hashing.service';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { EmailService } from 'src/email/email.service';
-import { userRelations, userSelect } from './queries/user.query';
+import { userSelect } from './queries/user.query';
+import { randomNumberCode } from 'src/utils/randomnumberCode';
+import { UserRole } from './enums/user-role.enum';
 
 @Injectable()
 export class UsersService {
@@ -25,26 +29,42 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await this.hashingService.hash(
-      createUserDto?.password as string,
-    );
+    const { email, ...rest } = createUserDto;
 
-    const newUser = {
-      ...createUserDto,
-      password: hashedPassword,
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const exists = await this.userRepository.findOne({
+      where: { email: normalizedEmail },
+    });
+
+    if (exists) {
+      throw new BadRequestException('Email já cadastrado.');
+    }
+
+    const hash = randomNumberCode();
+    const hashedPassword = await this.hashingService.hash(hash);
+
+    const user = {
+      ...rest,
+      email: normalizedEmail,
+      hash_password: hashedPassword,
     };
 
-    const user = this.userRepository.create(newUser);
+    try {
+      await this.userRepository.save(user);
 
-    if (!user) throw new BadRequestException('Erro ao criar um novo usuário');
-
-    await this.userRepository.save(user);
+      await this.emailService.sendEmail(
+        createUserDto.email,
+        'Senha de acesso Hospital Portal',
+        `Segue senha para o seu primeiro acesso ao sistema Hospital Portal: ${hash}`,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException('Erro ao salvar usuário');
+    }
 
     return { message: 'Usuário criado com sucesso' };
   }
 
-  //this route return all users
-  @HttpCode(HttpStatus.OK)
   async findAll() {
     const users = await this.userRepository.find();
 
@@ -70,7 +90,6 @@ export class UsersService {
       where: {
         id: tokenPayload.sub,
       },
-      relations: userRelations,
       select: userSelect,
     });
 
@@ -80,31 +99,44 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const userData = {
-      name: updateUserDto?.name,
-      avatar: updateUserDto?.avatar,
-      role: updateUserDto?.role,
-      status: updateUserDto?.status,
-    };
+    const user = await this.userRepository.findOne({ where: { id } });
 
-    if (updateUserDto?.password) {
-      const hashedPassword = await this.hashingService.hash(
-        updateUserDto.password,
-      );
-
-      userData['password'] = hashedPassword;
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado.');
     }
 
-    const user = await this.userRepository.preload({
-      id,
-      ...userData,
-    });
+    // Campos permitidos para qualquer usuário
+    if (updateUserDto.name !== undefined) user.name = updateUserDto.name;
+    if (updateUserDto.photo !== undefined) user.photo = updateUserDto.photo;
+    if (updateUserDto.photo_url !== undefined)
+      user.photo_url = updateUserDto.photo_url;
 
-    if (!user) throw new BadRequestException('Erro ao atualizar o usuário.');
+    if (updateUserDto.hash_password) {
+      user.hash_password = await this.hashingService.hash(
+        updateUserDto.hash_password,
+      );
+    }
 
-    await this.userRepository.save(user);
+    // Campos sensíveis (somente ADMIN)
+    if (user?.role === UserRole.ADMIN) {
+      if (updateUserDto.role !== undefined) user.role = updateUserDto.role;
+      if (updateUserDto.status !== undefined)
+        user.status = updateUserDto.status;
+    }
 
-    return user;
+    try {
+      await this.userRepository.save(user);
+    } catch (error) {
+      throw new InternalServerErrorException('Erro ao atualizar usuário.');
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+    };
   }
 
   async remove(id: string) {
@@ -112,7 +144,10 @@ export class UsersService {
       id,
     });
     if (!user) throw new NotFoundException('Usuário não encontrado.');
-    await this.userRepository.remove(user);
+    await this.userRepository.preload({
+      id,
+      status: false,
+    });
 
     return { message: 'Usuário removido com sucesso.' };
   }
@@ -121,6 +156,8 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({
       email,
     });
+
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
 
     return user;
   }

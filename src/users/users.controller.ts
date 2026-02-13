@@ -16,12 +16,15 @@ import { User } from './entities/user.entity';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { TokenPayloadParam } from 'src/auth/params/token-payload.params';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { STAFF } from 'src/auth/auth.constants';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @UseGuards(AuthTokenGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles(...STAFF)
   @Post('createUser')
   create(@Body() createUserDto: CreateUserDto): Promise<any> {
     return this.usersService.create(createUserDto);
