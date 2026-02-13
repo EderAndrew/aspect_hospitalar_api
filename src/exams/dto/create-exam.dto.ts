@@ -14,7 +14,7 @@ export class CreateExamDto {
 
   @IsNotEmpty()
   @IsUUID()
-  readonly 'specialty_id': string;
+  readonly specialty_id: string;
 
   @IsOptional()
   @IsString()

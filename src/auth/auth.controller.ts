@@ -10,9 +10,8 @@ import {
 import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { setAuthCookies } from './cookie.helper';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { CookieInterceptor } from 'src/common/interceptors/cookie.interceptor';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -23,6 +22,7 @@ export class AuthController {
     return this.authService.signup(createUserDto);
   }*/
 
+  @Public()
   @UseInterceptors(CookieInterceptor)
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Req() req: Request) {

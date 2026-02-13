@@ -16,7 +16,10 @@ export class ExamsService {
   ) {}
 
   async create(createExamDto: CreateExamDto) {
-    const exam = this.examRepository.create(createExamDto);
+    const exam = this.examRepository.create({
+      ...createExamDto,
+      specialty: { id: createExamDto.specialty_id },
+    });
 
     await this.examRepository.save(exam);
 
