@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -16,9 +10,6 @@ import jwtConfig from './config/jwt.config';
 import type { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { UserRole } from 'src/users/enums/user-role.enum';
-import { randomNumberCode } from 'src/utils/randomnumberCode';
 import { EmailService } from 'src/email/email.service';
 
 @Injectable()
@@ -34,7 +25,7 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
-  async signup(createUserDto: CreateUserDto): Promise<{ message: string }> {
+  /*async signup(createUserDto: CreateUserDto): Promise<{ message: string }> {
     return this.dataSource.transaction(async manager => {
       const userExists = await manager.findOne(User, {
         where: [{ email: createUserDto.email }, { cpf: createUserDto.cpf }],
@@ -75,12 +66,12 @@ export class AuthService {
           'Usuário criado com sucesso. Acesse o email para verificar a senha do primeiro acesso.',
       };
     });
-  }
+  }*/
 
   async login(loginDto: LoginDto) {
     const user = await this.userRepository.findOne({
       where: { email: loginDto.email },
-      select: ['id', 'email', 'password'],
+      select: ['id', 'email', 'hash_password'],
     });
 
     if (!user) {
@@ -89,7 +80,7 @@ export class AuthService {
 
     const passwordIsValid = await this.hashingService.compare(
       loginDto.password,
-      user.password,
+      user.hash_password,
     );
 
     if (!passwordIsValid) {

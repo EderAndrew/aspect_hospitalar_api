@@ -6,6 +6,7 @@ import { CommonModule } from 'src/common/common.module';
 import { Appointment } from './entities/appointment.entity';
 import { AppointmentsController } from './appointments.controller';
 import { AppointmentsService } from './appointments.service';
+import { PatientsModule } from 'src/patients/patients.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AppointmentsService } from './appointments.service';
     UsersModule,
     ExamsModule,
     CommonModule,
+    PatientsModule,
   ],
   controllers: [AppointmentsController],
   providers: [AppointmentsService],

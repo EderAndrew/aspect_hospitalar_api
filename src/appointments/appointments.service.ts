@@ -5,22 +5,27 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
 import { ExamsService } from 'src/exams/exams.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { scheduleRelations, scheduleSelect } from './queries/appointment.query';
+import {
+  appointmentSelect,
+  appointmentsRelation,
+} from './queries/appointment.query';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
 import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
 import { Appointment } from './entities/appointment.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { PatientsService } from 'src/patients/patients.service';
+import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { AppointmentStatus } from './enums/appointmentStatus.enum';
 
 @Injectable()
 export class AppointmentsService {
   constructor(
     @InjectRepository(Appointment)
     private readonly appointmentRepository: Repository<Appointment>,
-    private readonly usersService: UsersService,
     private readonly examsService: ExamsService,
+    private readonly patientsService: PatientsService,
     private readonly cacheInvalidationService: CacheInvalidationService,
   ) {}
 
@@ -70,32 +75,32 @@ export class AppointmentsService {
     await this.cacheInvalidationService.invalidateSchedulesCache();
 
     return appointment;
-}
+  }
 
   async findAll(
     paginationDto: PaginationDto,
-  ): Promise<PaginatedResponseDto<Schedules>> {
+  ): Promise<PaginatedResponseDto<Appointment>> {
     const { limit = 10, offset = 0 } = paginationDto;
 
-    const items: Schedules[] = await this.scheduleRepository.find({
+    const items: Appointment[] = await this.appointmentRepository.find({
       take: limit,
       skip: offset,
-      relations: scheduleRelations,
-      select: scheduleSelect,
+      relations: appointmentsRelation,
+      select: appointmentSelect,
     });
 
-    const total = await this.scheduleRepository.count();
+    const total = await this.appointmentRepository.count();
 
     return { items, total };
   }
 
   async findOne(id: string) {
-    const schedule = await this.scheduleRepository.findOne({
+    const schedule = await this.appointmentRepository.findOne({
       where: {
         id,
       },
-      relations: scheduleRelations,
-      select: scheduleSelect,
+      relations: appointmentsRelation,
+      select: appointmentSelect,
     });
 
     if (!schedule) throw new NotFoundException('Agendamento não encontrados');
@@ -105,58 +110,58 @@ export class AppointmentsService {
 
   async findAllActives(
     paginationDto: PaginationDto,
-  ): Promise<PaginatedResponseDto<Schedules>> {
+  ): Promise<PaginatedResponseDto<Appointment>> {
     const { limit = 10, offset = 0 } = paginationDto;
 
-    const items = await this.scheduleRepository.find({
+    const items = await this.appointmentRepository.find({
       where: {
-        status: true,
+        status: AppointmentStatus.CONFIRMED,
       },
       take: limit,
       skip: offset,
-      relations: scheduleRelations,
-      select: scheduleSelect,
+      relations: appointmentsRelation,
+      select: appointmentSelect,
     });
 
     if (!items) throw new NotFoundException('Agendamentos não encontrados');
 
-    const total = await this.scheduleRepository.count({
-      where: { status: true },
+    const total = await this.appointmentRepository.count({
+      where: { status: AppointmentStatus.CONFIRMED },
     });
 
     return { items, total };
   }
 
-  async findByUserId(id: string): Promise<Schedules[]> {
-    const items = await this.scheduleRepository.find({
+  async findByUserId(id: string): Promise<Appointment[]> {
+    const items = await this.appointmentRepository.find({
       where: {
-        user: { id },
-        status: true,
+        patient: { id },
+        status: AppointmentStatus.CONFIRMED,
       },
-      relations: scheduleRelations,
-      select: scheduleSelect,
+      relations: appointmentsRelation,
+      select: appointmentSelect,
     });
 
     return items;
   }
 
-  async update(id: string, updateScheduleDto: UpdateScheduleDto) {
-    const schedule = await this.scheduleRepository.preload({
+  async update(id: string, updateAppointmentDto: UpdateAppointmentDto) {
+    const schedule = await this.appointmentRepository.preload({
       id,
-      ...updateScheduleDto,
+      ...updateAppointmentDto,
     });
 
     if (!schedule)
       throw new BadRequestException('Erro ao atualizar o agendamento.');
 
-    await this.scheduleRepository.save(schedule);
+    await this.appointmentRepository.save(schedule);
     await this.cacheInvalidationService.invalidateSchedulesCache();
 
     return { message: 'Agendamento atualizado com sucesso.' };
   }
 
-  async remove(id: string, updateScheduleDto: UpdateScheduleDto) {
-    const schedule = await this.scheduleRepository.preload({
+  async remove(id: string, updateScheduleDto: UpdateAppointmentDto) {
+    const schedule = await this.appointmentRepository.preload({
       id,
       status: updateScheduleDto.status,
     });
@@ -164,7 +169,7 @@ export class AppointmentsService {
     if (!schedule)
       throw new BadRequestException('Erro ao remover o agendamento.');
 
-    await this.scheduleRepository.save(schedule);
+    await this.appointmentRepository.save(schedule);
     await this.cacheInvalidationService.invalidateSchedulesCache();
 
     return { message: 'Agendamento removido com sucesso.' };

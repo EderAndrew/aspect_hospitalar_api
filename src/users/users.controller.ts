@@ -49,7 +49,7 @@ export class UsersController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUseDto: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<any> {
     return this.usersService.update(id, updateUseDto);
   }
 

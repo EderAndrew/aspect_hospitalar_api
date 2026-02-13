@@ -17,6 +17,7 @@ import { Appointment } from './entities/appointment.entity';
 import { AppointmentsService } from './appointments.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { STAFF } from 'src/auth/auth.constants';
+import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 //import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
 @UseGuards(AuthTokenGuard)
@@ -33,7 +34,7 @@ export class AppointmentsController {
   }
 
   //@UseInterceptors(HandlerCacheInterceptor)
-  @Get('allSchedules')
+  @Get('allAppointmens')
   findAll(
     @Query() paginationDto: PaginationDto,
   ): Promise<PaginatedResponseDto<Appointment>> {
@@ -41,37 +42,37 @@ export class AppointmentsController {
   }
 
   //@UseInterceptors(HandlerCacheInterceptor)
-  @Get('schedule/:id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Schedules> {
-    return this.scheduleService.findOne(id);
+  @Get('appointment/:id')
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Appointment> {
+    return this.appointmentService.findOne(id);
   }
 
   //@UseInterceptors(HandlerCacheInterceptor)
-  @Get('allActiveSchedules')
+  @Get('allActiveAppointments')
   findActives(
     @Query() paginationDto: PaginationDto,
-  ): Promise<PaginatedResponseDto<Schedules>> {
-    return this.scheduleService.findAllActives(paginationDto);
+  ): Promise<PaginatedResponseDto<Appointment>> {
+    return this.appointmentService.findAllActives(paginationDto);
   }
 
   @Get('allUserSchedules/:id')
-  findByUserId(@Param('id', ParseUUIDPipe) id: string): Promise<Schedules[]> {
-    return this.scheduleService.findByUserId(id);
+  findByUserId(@Param('id', ParseUUIDPipe) id: string): Promise<Appointment[]> {
+    return this.appointmentService.findByUserId(id);
   }
 
   @Patch('updateSchedule/:id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateScheduleDto: UpdateScheduleDto,
+    @Body() updateApppointmentDto: UpdateAppointmentDto,
   ): Promise<any> {
-    return this.scheduleService.update(id, updateScheduleDto);
+    return this.appointmentService.update(id, updateApppointmentDto);
   }
 
   @Patch('removeSchedule/:id')
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateScheduleDto: UpdateScheduleDto,
+    @Body() updateApppointmentDto: UpdateAppointmentDto,
   ): Promise<any> {
-    return this.scheduleService.remove(id, updateScheduleDto);
+    return this.appointmentService.remove(id, updateApppointmentDto);
   }
 }

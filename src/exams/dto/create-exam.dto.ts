@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateExamDto {
   @IsNotEmpty()
@@ -7,9 +13,8 @@ export class CreateExamDto {
   readonly name: string;
 
   @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
-  readonly specialty: string;
+  @IsUUID()
+  readonly 'specialty_id': string;
 
   @IsOptional()
   @IsString()
