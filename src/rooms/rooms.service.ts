@@ -1,10 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Room } from './entities/room.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RoomsService {
-  constructor(private readonly roomsRepository: Repository<Room>) {}
+  constructor(
+    @InjectRepository(Room)
+    private readonly roomsRepository: Repository<Room>,
+  ) {}
 
   async findRoom(id: string): Promise<Room> {
     try {

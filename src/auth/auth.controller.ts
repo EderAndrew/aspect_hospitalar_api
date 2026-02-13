@@ -18,10 +18,10 @@ import { CookieInterceptor } from 'src/common/interceptors/cookie.interceptor';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup')
+  /*@Post('signup')
   async signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto);
-  }
+  }*/
 
   @UseInterceptors(CookieInterceptor)
   @Post('login')

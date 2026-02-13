@@ -1,10 +1,5 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../../app/app.module';
-import { ExamsService } from '../../exams/exams.service';
-import { ExamsSeed } from '../exams';
-
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule);
+  /*const app = await NestFactory.createApplicationContext(AppModule);
 
   const examsService = app.get(ExamsService);
 
@@ -13,7 +8,7 @@ async function bootstrap() {
     console.log('Exame criado com sucesso.');
   }
 
-  await app.close();
+  await app.close();*/
 }
 
 bootstrap();

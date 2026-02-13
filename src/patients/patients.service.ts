@@ -2,10 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { Patient } from './entities/patient.entity';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PatientsService {
-  constructor(private readonly patientsRepository: Repository<Patient>) {}
+  constructor(
+    @InjectRepository(Patient)
+    private readonly patientsRepository: Repository<Patient>,
+  ) {}
+
   async findPatient(id: string): Promise<Patient> {
     try {
       const patient = await this.patientsRepository.findOne({
