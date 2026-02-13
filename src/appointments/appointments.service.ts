@@ -18,6 +18,8 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { PatientsService } from 'src/patients/patients.service';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentStatus } from './enums/appointmentStatus.enum';
+import { DoctorsService } from 'src/doctors/doctors.service';
+import { RoomsService } from 'src/rooms/rooms.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -26,6 +28,8 @@ export class AppointmentsService {
     private readonly appointmentRepository: Repository<Appointment>,
     private readonly examsService: ExamsService,
     private readonly patientsService: PatientsService,
+    private readonly doctorsService: DoctorsService,
+    private readonly roomsService: RoomsService,
     private readonly cacheInvalidationService: CacheInvalidationService,
   ) {}
 
@@ -42,10 +46,10 @@ export class AppointmentsService {
 
     // Buscar entidades relacionadas
     const [patient, exam, doctor, room] = await Promise.all([
-      this.patientsService.findOne(patient_id),
-      this.examsService.findOne(exam_id),
-      this.doctorsService.findOne(doctor_id),
-      this.roomsService.findOne(room_id),
+      this.patientsService.findPatient(patient_id),
+      this.examsService.findExam(exam_id),
+      this.doctorsService.findDoctor(doctor_id),
+      this.roomsService.findRoom(room_id),
     ]);
 
     if (!patient || !exam || !doctor || !room) {
@@ -67,7 +71,7 @@ export class AppointmentsService {
       start_time: new Date(start_time),
       end_time: new Date(end_time),
       status: AppointmentStatus.SCHEDULED,
-      notes: notes ?? null,
+      notes: notes ?? undefined,
     });
 
     await this.appointmentRepository.save(appointment);

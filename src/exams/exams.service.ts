@@ -32,7 +32,7 @@ export class ExamsService {
     return exams;
   }
 
-  async findOne(id: string) {
+  async findExam(id: string) {
     const exam = await this.examRepository.findOne({
       where: {
         id,

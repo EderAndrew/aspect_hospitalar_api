@@ -29,8 +29,8 @@ export class ExamsController {
   }
 
   @Get('exam/:id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Exam> {
-    return this.examsService.findOne(id);
+  findExam(@Param('id', ParseUUIDPipe) id: string): Promise<Exam> {
+    return this.examsService.findExam(id);
   }
 
   @Delete('exam/:id')

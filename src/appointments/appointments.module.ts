@@ -7,6 +7,8 @@ import { Appointment } from './entities/appointment.entity';
 import { AppointmentsController } from './appointments.controller';
 import { AppointmentsService } from './appointments.service';
 import { PatientsModule } from 'src/patients/patients.module';
+import { DoctorsModule } from 'src/doctors/doctors.module';
+import { RoomsModule } from 'src/rooms/rooms.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { PatientsModule } from 'src/patients/patients.module';
     ExamsModule,
     CommonModule,
     PatientsModule,
+    DoctorsModule,
+    RoomsModule,
   ],
   controllers: [AppointmentsController],
   providers: [AppointmentsService],
