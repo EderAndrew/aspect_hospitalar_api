@@ -48,7 +48,7 @@ export class User {
   photo_url?: string;
 
   @IsEnum(UserRole)
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.ADMIN })
+  @Column({ type: 'enum', enum: UserRole })
   role: UserRole;
 
   @Column({ default: true })
