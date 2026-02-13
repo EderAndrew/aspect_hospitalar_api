@@ -15,6 +15,8 @@ import { PaginatedResponseDto } from './dto/paginated-response.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { Appointment } from './entities/appointment.entity';
 import { AppointmentsService } from './appointments.service';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { STAFF } from 'src/auth/auth.constants';
 //import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
 @UseGuards(AuthTokenGuard)
@@ -22,8 +24,11 @@ import { AppointmentsService } from './appointments.service';
 export class AppointmentsController {
   constructor(private readonly appointmentService: AppointmentsService) {}
 
+  @Roles(...STAFF)
   @Post('create')
-  create(@Body() createAppointmentDto: CreateAppointmentDto): Promise<any> {
+  create(
+    @Body() createAppointmentDto: CreateAppointmentDto,
+  ): Promise<Appointment> {
     return this.appointmentService.create(createAppointmentDto);
   }
 

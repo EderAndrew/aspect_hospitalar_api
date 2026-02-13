@@ -18,36 +18,59 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 export class AppointmentsService {
   constructor(
     @InjectRepository(Appointment)
-    private readonly scheduleRepository: Repository<Appointment>,
+    private readonly appointmentRepository: Repository<Appointment>,
     private readonly usersService: UsersService,
     private readonly examsService: ExamsService,
     private readonly cacheInvalidationService: CacheInvalidationService,
   ) {}
 
-  async create(createAppointmentDto: CreateAppointmentDto) {
-    const { userId, examId } = createAppointmentDto;
-    const user = await this.usersService.findOne(userId);
-    const exam = await this.examsService.findOne(examId);
+  async create(dto: CreateAppointmentDto) {
+    const {
+      patient_id,
+      exam_id,
+      doctor_id,
+      room_id,
+      start_time,
+      end_time,
+      notes,
+    } = dto;
 
-    const schedule = this.scheduleRepository.create({
-      user,
+    // Buscar entidades relacionadas
+    const [patient, exam, doctor, room] = await Promise.all([
+      this.patientsService.findOne(patient_id),
+      this.examsService.findOne(exam_id),
+      this.doctorsService.findOne(doctor_id),
+      this.roomsService.findOne(room_id),
+    ]);
+
+    if (!patient || !exam || !doctor || !room) {
+      throw new BadRequestException('Dados inválidos para o agendamento.');
+    }
+
+    // Validação de horário
+    if (new Date(end_time) <= new Date(start_time)) {
+      throw new BadRequestException(
+        'O horário final deve ser maior que o horário inicial.',
+      );
+    }
+
+    const appointment = this.appointmentRepository.create({
+      patient,
       exam,
-      patient: createScheduleDto.patient,
-      date: createScheduleDto.date,
-      time: createScheduleDto.time,
-      status: createScheduleDto.status,
-      info: createScheduleDto.info || '',
+      doctor,
+      room,
+      start_time: new Date(start_time),
+      end_time: new Date(end_time),
+      status: AppointmentStatus.SCHEDULED,
+      notes: notes ?? null,
     });
 
-    if (!schedule)
-      throw new BadRequestException('Erro ao criar um novo agendamento.');
+    await this.appointmentRepository.save(appointment);
 
-    await this.scheduleRepository.save(schedule);
-    // Invalida o cache de schedules para que as próximas requisições GET retornem dados atualizados
     await this.cacheInvalidationService.invalidateSchedulesCache();
 
-    return schedule;
-  }
+    return appointment;
+}
 
   async findAll(
     paginationDto: PaginationDto,

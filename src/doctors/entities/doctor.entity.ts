@@ -31,7 +31,7 @@ export class Doctor {
 
   @ManyToMany(() => Specialty, specialty => specialty.doctors)
   @JoinTable({
-    name: 'doctor_specialties',
+    name: 'specialty_id',
   })
   specialties: Specialty[];
 

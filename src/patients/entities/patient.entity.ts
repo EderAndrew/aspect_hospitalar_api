@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -32,7 +32,6 @@ export class Patient {
   cpf: string;
 
   @Column({ length: 20 })
-  @IsString()
   @IsNotEmpty()
   phone: string;
 

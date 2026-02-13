@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { PlanType } from '../enums/plan-type.enum';
 
 export class CreatePlansDto {
@@ -12,10 +6,6 @@ export class CreatePlansDto {
   @IsNotEmpty()
   @MaxLength(255)
   readonly name: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  readonly status: boolean;
 
   @IsNotEmpty()
   @IsEnum(PlanType)
