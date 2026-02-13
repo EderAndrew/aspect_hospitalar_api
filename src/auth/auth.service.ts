@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { HashingService } from './hashing/hashing.service';
 import jwtConfig from './config/jwt.config';
@@ -11,14 +9,15 @@ import type { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { EmailService } from 'src/email/email.service';
+import { UserRole } from 'src/users/enums/user-role.enum';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     private readonly hashingService: HashingService,
+    private readonly usersService: UsersService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly jwtService: JwtService,
@@ -69,13 +68,10 @@ export class AuthService {
   }*/
 
   async login(loginDto: LoginDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: loginDto.email },
-      select: ['id', 'email', 'hash_password'],
-    });
+    const user = await this.usersService.findByEmailForAuth(loginDto.email);
 
     if (!user) {
-      throw new UnauthorizedException('Usuário ou senha inválidos');
+      throw new UnauthorizedException('Usuário e/ou senha inválidos');
     }
 
     const passwordIsValid = await this.hashingService.compare(
@@ -84,16 +80,20 @@ export class AuthService {
     );
 
     if (!passwordIsValid) {
-      throw new UnauthorizedException('Usuário ou senha inválidos');
+      throw new UnauthorizedException('Usuário e/ou senha inválidos');
     }
 
     const accessToken = await this.signJwtAsync(
       user.id,
+      user.role,
+      'access',
       this.jwtConfiguration.jwtTtl,
     );
 
     const refreshToken = await this.signJwtAsync(
       user.id,
+      user.role,
+      'refresh',
       this.jwtConfiguration.refresh_jwtTtl,
     );
 
@@ -107,44 +107,66 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token ausente.');
     }
 
+    interface JwtPayload {
+      sub: string;
+      role: UserRole;
+      type?: 'access' | 'refresh';
+    }
+
+    let payload: JwtPayload;
+
     try {
-      await this.jwtService.verifyAsync(refreshToken, {
+      payload = await this.jwtService.verifyAsync<JwtPayload>(refreshToken, {
         secret: this.jwtConfiguration.secret,
       });
-
-      // Ensure type safety for decoded payload
-      interface JwtPayload {
-        sub: string | number;
-        [key: string]: unknown;
-      }
-
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        refreshToken,
-        {
-          secret: this.jwtConfiguration.secret,
-        },
-      );
-
-      const newAccessToken = await this.signJwtAsync(
-        payload.sub as string,
-        this.jwtConfiguration.jwtTtl,
-      );
-
-      const newRefreshToken = await this.signJwtAsync(
-        payload.sub as string,
-        this.jwtConfiguration.refresh_jwtTtl,
-      );
-
-      return { newAccessToken, newRefreshToken };
     } catch (error) {
       throw new UnauthorizedException(error);
     }
+
+    // valida tipo do token
+    if (payload.type !== 'refresh') {
+      throw new UnauthorizedException('Token inválido.');
+    }
+
+    // valida usuário ainda existe e está ativo
+    const user = await this.usersService.findOne(payload.sub);
+
+    if (!user || !user.status) {
+      throw new UnauthorizedException('Usuário inválido.');
+    }
+
+    // gera novos tokens
+    const newAccessToken = await this.signJwtAsync(
+      user.id,
+      user.role,
+      'access',
+      this.jwtConfiguration.jwtTtl,
+    );
+
+    const newRefreshToken = await this.signJwtAsync(
+      user.id,
+      user.role,
+      'refresh',
+      this.jwtConfiguration.refresh_jwtTtl,
+    );
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
   }
 
-  private async signJwtAsync(sub: string, expiresIn: number) {
+  private async signJwtAsync(
+    sub: string,
+    role: string,
+    type: 'access' | 'refresh',
+    expiresIn: number,
+  ) {
     return await this.jwtService.signAsync(
       {
         sub,
+        role,
+        type,
       },
       {
         audience: this.jwtConfiguration.audience,

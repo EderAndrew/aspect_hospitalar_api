@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailModule } from 'src/email/email.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Global()
 @Module({
@@ -17,6 +18,7 @@ import { EmailModule } from 'src/email/email.module';
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     EmailModule,
+    UsersModule,
   ],
   providers: [
     {

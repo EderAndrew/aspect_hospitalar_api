@@ -13,6 +13,7 @@ import { PlansModule } from 'src/plans/plans.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { PatientsModule } from 'src/patients/patients.module';
+import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 
 @Module({
   imports: [
@@ -44,6 +45,10 @@ import { PatientsModule } from 'src/patients/patients.module';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthTokenGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

@@ -39,11 +39,11 @@ export class User {
   @IsString()
   hash_password: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, nullable: true })
   @IsOptional()
   photo?: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, nullable: true })
   @IsOptional()
   photo_url?: string;
 

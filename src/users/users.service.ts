@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
-  HttpCode,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -30,7 +28,6 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const { email, ...rest } = createUserDto;
-
     const normalizedEmail = email.toLowerCase().trim();
 
     const exists = await this.userRepository.findOne({
@@ -48,6 +45,7 @@ export class UsersService {
       ...rest,
       email: normalizedEmail,
       hash_password: hashedPassword,
+      role: UserRole[createUserDto.role as keyof typeof UserRole],
     };
 
     try {
@@ -59,6 +57,7 @@ export class UsersService {
         `Segue senha para o seu primeiro acesso ao sistema Hospital Portal: ${hash}`,
       );
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException('Erro ao salvar usuário');
     }
 
@@ -150,6 +149,13 @@ export class UsersService {
     });
 
     return { message: 'Usuário removido com sucesso.' };
+  }
+
+  async findByEmailForAuth(email: string) {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'hash_password', 'role', 'status'],
+    });
   }
 
   async findByEmail(email: string) {

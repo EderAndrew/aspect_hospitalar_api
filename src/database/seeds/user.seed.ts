@@ -8,19 +8,10 @@ async function bootstrap() {
 
   const userService = app.get(UsersService);
 
-  const existUser = await userService.findByEmail(
-    process.env.SEED_EMAIL as string,
-  );
-
-  if (existUser) {
-    console.log('Usuário já registrado.');
-    return;
-  }
-
   await userService.create({
     name: process.env.SEED_NAME as string,
     email: process.env.SEED_EMAIL as string,
-    role: process.env.SEED_ROLE as UserRole,
+    role: UserRole[process.env.SEED_ROLE as keyof typeof UserRole],
     status: Boolean(process.env.SEED_STATUS),
   });
 
