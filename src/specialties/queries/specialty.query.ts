@@ -2,7 +2,9 @@ import { FindOptionsSelect, FindOptionsRelations } from 'typeorm';
 import { Specialty } from 'src/specialties/entities/specialty.entity';
 
 export const specialtyRelations: FindOptionsRelations<Specialty> = {
-  exams: true,
+  exams: {
+    specialty: true,
+  },
 };
 
 export const appointmentSelect: FindOptionsSelect<Specialty> = {
@@ -11,9 +13,11 @@ export const appointmentSelect: FindOptionsSelect<Specialty> = {
   exams: {
     id: true,
     name: true,
-    specialty: true,
     description: true,
     preparetion: true,
     duration: true,
+    specialty: {
+      id: true,
+    },
   },
 };
