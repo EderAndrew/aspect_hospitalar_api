@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Room } from './entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateRoomDto } from './dto/create-room.dto';
 
 @Injectable()
 export class RoomsService {
@@ -9,6 +10,19 @@ export class RoomsService {
     @InjectRepository(Room)
     private readonly roomsRepository: Repository<Room>,
   ) {}
+
+  async createRoom(createRoomDto: CreateRoomDto): Promise<Room> {
+    try {
+      return this.roomsRepository.save(createRoomDto);
+    } catch (error) {
+      console.log(error);
+      throw new Error('Problema para criar uma nova sala.');
+    }
+  }
+
+  async findAllRoom(): Promise<Room[]> {
+    return this.roomsRepository.find();
+  }
 
   async findRoom(id: string): Promise<Room> {
     try {

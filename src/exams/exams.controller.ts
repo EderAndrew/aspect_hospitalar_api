@@ -16,12 +16,11 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN_ONLY } from 'src/auth/auth.constants';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(AuthTokenGuard)
+@UseGuards(AuthTokenGuard, RolesGuard)
 @Controller('exams')
 export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
 
-  @UseGuards(AuthTokenGuard, RolesGuard)
   @Roles(...ADMIN_ONLY)
   @Post('createExam')
   create(@Body() createExamDto: CreateExamDto): Promise<any> {
