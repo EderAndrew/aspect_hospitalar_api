@@ -7,10 +7,8 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { Appointment } from './entities/appointment.entity';
@@ -20,7 +18,6 @@ import { STAFF } from 'src/auth/auth.constants';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 //import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
-@UseGuards(AuthTokenGuard)
 @Controller('appointments')
 export class AppointmentsController {
   constructor(private readonly appointmentService: AppointmentsService) {}

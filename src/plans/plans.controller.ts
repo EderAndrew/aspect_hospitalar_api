@@ -5,14 +5,11 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { PlansService } from './plans.service';
 import { CreatePlansDto } from './dto/create-plans.dto';
 import { Plan } from './entities/plans.entity';
 
-@UseGuards(AuthTokenGuard)
 @Controller('plans')
 export class PlansController {
   constructor(private readonly plansService: PlansService) {}

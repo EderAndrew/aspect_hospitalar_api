@@ -5,16 +5,12 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN_ONLY, STAFF } from 'src/auth/auth.constants';
 import { CreateRoomDto } from './dto/create-room.dto';
 
-@UseGuards(AuthTokenGuard, RolesGuard)
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}

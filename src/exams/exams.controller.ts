@@ -6,17 +6,13 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ExamsService } from './exams.service';
 import { Exam } from './entities/exam.entity';
 import { CreateExamDto } from './dto/create-exam.dto';
-import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN_ONLY } from 'src/auth/auth.constants';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(AuthTokenGuard, RolesGuard)
 @Controller('exams')
 export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
