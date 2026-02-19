@@ -24,6 +24,17 @@ export class RoomsService {
     return this.roomsRepository.find();
   }
 
+  async totalRooms() {
+    try {
+      const exists = await this.roomsRepository.count();
+
+      return exists;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Problema para criar uma nova sala.');
+    }
+  }
+
   async findRoom(id: string): Promise<Room> {
     try {
       const room = await this.roomsRepository.findOne({

@@ -1,62 +1,62 @@
 export const Rooms = [
   {
-    name: '',
-    sector: '',
+    name: 'Ruby',
+    sector: 'Atendimento',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Safira',
+    sector: 'Atendimento',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Diamente',
+    sector: 'Atendimento',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Topázio',
+    sector: 'diagnóstico/terapêutico',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Turmalina',
+    sector: 'diagnóstico/terapêutico',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Granada',
+    sector: 'diagnóstico/terapêutico',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Opala',
+    sector: 'Urgência e Emergência',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Jade',
+    sector: 'Urgência e Emergência',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Ágata',
+    sector: 'Pronto-Socorro',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Morganita',
+    sector: 'Pronto-Socorro',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Crisoberilo',
+    sector: 'Ambulatório',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Ametista',
+    sector: 'Ambulatório',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Ônix',
+    sector: 'Laboratórop de Análises Clínicas',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Rodolita',
+    sector: 'Fisioterapia e Terapia Nutricional',
   },
   {
-    name: '',
-    sector: '',
+    name: 'Água-Marinha',
+    sector: 'Centro Cirúrgico e Obstétrico',
   },
 ];
