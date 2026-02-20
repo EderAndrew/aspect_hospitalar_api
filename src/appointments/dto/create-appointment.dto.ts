@@ -27,10 +27,6 @@ export class CreateAppointmentDto {
   @IsNotEmpty()
   readonly start_time: string;
 
-  @IsDateString()
-  @IsNotEmpty()
-  readonly end_time: string;
-
   @IsOptional()
   @IsString()
   readonly notes?: string;

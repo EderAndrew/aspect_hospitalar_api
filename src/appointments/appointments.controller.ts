@@ -14,7 +14,7 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { Appointment } from './entities/appointment.entity';
 import { AppointmentsService } from './appointments.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { STAFF } from 'src/auth/auth.constants';
+import { PATIENT, STAFF } from 'src/auth/auth.constants';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 //import { HandlerCacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 
@@ -22,7 +22,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 export class AppointmentsController {
   constructor(private readonly appointmentService: AppointmentsService) {}
 
-  @Roles(...STAFF)
+  @Roles(...STAFF, ...PATIENT)
   @Post('create')
   create(
     @Body() createAppointmentDto: CreateAppointmentDto,
@@ -55,6 +55,14 @@ export class AppointmentsController {
   @Get('allUserSchedules/:id')
   findByUserId(@Param('id', ParseUUIDPipe) id: string): Promise<Appointment[]> {
     return this.appointmentService.findByUserId(id);
+  }
+
+  @Roles(...PATIENT)
+  @Get('myAppointments')
+  findMyAppointments(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<Appointment[]> {
+    return this.appointmentService.findMyAppointments(id);
   }
 
   @Patch('updateSchedule/:id')

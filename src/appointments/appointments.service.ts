@@ -34,15 +34,7 @@ export class AppointmentsService {
   ) {}
 
   async create(dto: CreateAppointmentDto) {
-    const {
-      patient_id,
-      exam_id,
-      doctor_id,
-      room_id,
-      start_time,
-      end_time,
-      notes,
-    } = dto;
+    const { patient_id, exam_id, doctor_id, room_id, start_time, notes } = dto;
 
     // Buscar entidades relacionadas
     const [patient, exam, doctor, room] = await Promise.all([
@@ -56,20 +48,12 @@ export class AppointmentsService {
       throw new BadRequestException('Dados inválidos para o agendamento.');
     }
 
-    // Validação de horário
-    if (new Date(end_time) <= new Date(start_time)) {
-      throw new BadRequestException(
-        'O horário final deve ser maior que o horário inicial.',
-      );
-    }
-
     const appointment = this.appointmentRepository.create({
       patient,
       exam,
       doctor,
       room,
       start_time: new Date(start_time),
-      end_time: new Date(end_time),
       status: AppointmentStatus.SCHEDULED,
       notes: notes ?? undefined,
     });
@@ -110,6 +94,40 @@ export class AppointmentsService {
     if (!schedule) throw new NotFoundException('Agendamento não encontrados');
 
     return schedule;
+  }
+
+  async findMyAppointments(id: string): Promise<Appointment[]> {
+    try {
+      const items = await this.appointmentRepository.find({
+        where: {
+          patient: { id },
+        },
+        relations: appointmentsRelation,
+        select: appointmentSelect,
+      });
+
+      return items;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Problema para buscar os Agendamentos.');
+    }
+  }
+
+  async findAppointmentsByDoctor(id: string): Promise<Appointment[]> {
+    try {
+      const items = await this.appointmentRepository.find({
+        where: {
+          doctor: { id },
+        },
+        relations: appointmentsRelation,
+        select: appointmentSelect,
+      });
+
+      return items;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Problema para buscar os Agendamentos para os médicos.');
+    }
   }
 
   async findAllActives(

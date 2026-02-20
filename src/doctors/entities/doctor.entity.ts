@@ -26,7 +26,7 @@ export class Doctor {
   @JoinColumn({ name: 'user_id' })
   user?: User;
 
-  @Column({ length: 30 })
+  @Column({ length: 30, unique: true })
   crm: string;
 
   @ManyToMany(() => Specialty, specialty => specialty.doctors)
