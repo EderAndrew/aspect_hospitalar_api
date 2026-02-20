@@ -15,6 +15,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { PatientsModule } from 'src/patients/patients.module';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { RoomsModule } from 'src/rooms/rooms.module';
+import { DoctorsModule } from 'src/doctors/doctors.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { RoomsModule } from 'src/rooms/rooms.module';
     PlansModule,
     PatientsModule,
     RoomsModule,
+    DoctorsModule,
   ],
   controllers: [AppController],
   providers: [

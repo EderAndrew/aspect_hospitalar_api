@@ -77,4 +77,15 @@ export class DoctorsService {
       throw new Error('Method not implemented.');
     }
   }
+
+  async totalDoctors(): Promise<number> {
+    try {
+      const total = await this.doctorsRepository.count();
+
+      return total;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Erro ao criar um médico.');
+    }
+  }
 }
