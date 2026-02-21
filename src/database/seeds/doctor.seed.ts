@@ -18,12 +18,15 @@ async function bootstrap() {
 
   for (const doc of DoctorsSeed) {
     await doctorsService.createDoctor({
-      ...doc,
+      name: doc.name,
+      email: doc.email,
       role: UserRole.DOCTOR,
+      crm: doc.crm,
+      specialty_id: doc.specialty_id,
     });
   }
 
-  console.log('Usuário criado com sucesso.');
+  console.log('Médicos criado com sucesso.');
   await app.close();
 }
 
